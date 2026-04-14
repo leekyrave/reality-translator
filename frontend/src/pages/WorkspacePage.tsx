@@ -33,6 +33,7 @@ export default function WorkspacePage() {
 
   /* chat input */
   const [chatInput, setChatInput] = useState("");
+  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
 
   /* ── file helpers ── */
   const handleFileSelect = (f: File) => {
@@ -55,6 +56,33 @@ export default function WorkspacePage() {
   const onDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
   const onDragLeave = () => setIsDragging(false);
 
+  /* ── stream chat ── */
+  async function* streamChatMessage(workspaceId: string, message: string): AsyncGenerator<string> {
+    const res = await fetch(`${BASE_URL}/chat/stream/${workspaceId}`, {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message }),
+      credentials: "include",
+    });
+
+    if (!res.ok || !res.body) throw new Error(`Error: ${res.status}`);
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      for (const line of decoder.decode(value).split('\n')) {
+        if (!line.startsWith('data: ') || line === 'data: [DONE]') continue;
+        try {
+          const text = JSON.parse(line.slice(6)).content;
+          if (text) yield text;
+        } catch { /* skip malformed chunks */ }
+      }
+    }
+  }
+
   /* ── upload & analyse ── */
   const handleUpload = async () => {
     if (!file) return;
@@ -63,9 +91,11 @@ export default function WorkspacePage() {
 
     try {
       const formData = new FormData();
-      formData.append("document", file);
+      formData.append("file", file);
+      formData.append("message", file.name);
 
-      const res = await fetch(`${BASE_URL}/documents/simplify`, {
+
+      const res = await fetch(`${BASE_URL}/chat/message`, {
         method: "POST",
         body: formData,
         credentials: "include",
@@ -88,8 +118,41 @@ export default function WorkspacePage() {
   /* ── chat submit ── */
   const handleChatSubmit = async () => {
     if (!chatInput.trim()) return;
-    // extend: send message + file context to /api/chat
-    setChatInput("");
+    
+    try {
+      const message = chatInput;
+      setChatInput("");
+
+      // First, get the workspaceId from the initial message endpoint
+      const form = new FormData();
+      form.set('message', message);
+
+      const res = await fetch(`${BASE_URL}/chat/message`, {
+        method: "POST",
+        body: form,
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message ?? `Error ${res.status}`);
+      }
+
+      const data = await res.json();
+      const newWorkspaceId = data.workspaceId;
+
+      if (newWorkspaceId) {
+        setWorkspaceId(newWorkspaceId);
+
+        // Now stream from the chat stream endpoint
+        for await (const chunk of streamChatMessage(newWorkspaceId, message)) {
+          console.log("Stream chunk:", chunk);
+          // Handle streamed data here (e.g., append to chat messages state if you have one)
+        }
+      }
+    } catch (e: unknown) {
+      setError((e as Error).message ?? "Chat submission failed");
+    }
   };
 
   return (
