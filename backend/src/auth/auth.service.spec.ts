@@ -7,6 +7,7 @@ import {
   ConflictException,
   BadRequestException,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UniqueConstraintViolationException } from '@mikro-orm/core';
 import { User } from '@/libs/orm/entities';
@@ -115,7 +116,7 @@ describe('AuthService', () => {
       expect(result).toEqual({ token: 'jwt-token' });
     });
 
-    it('should throw BadRequestException if user not found', async () => {
+    it('should throw UnauthorizedException if user not found', async () => {
       mockEm.findOne.mockResolvedValue(null);
 
       await expect(
@@ -124,10 +125,10 @@ describe('AuthService', () => {
           name: 'wrong',
           password: 'password123',
         }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(UnauthorizedException);
     });
 
-    it('should throw BadRequestException if password invalid', async () => {
+    it('should throw UnauthorizedException if password invalid', async () => {
       mockUser.verifyPassword.mockResolvedValue(false);
       mockEm.findOne.mockResolvedValue(mockUser);
 
@@ -137,7 +138,7 @@ describe('AuthService', () => {
           name: 'testuser',
           password: 'wrongpassword',
         }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw InternalServerErrorException on db error', async () => {

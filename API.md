@@ -1,4 +1,4 @@
-const axios = api.create('http://localhost:3000/api')
+const axios = api.create('http://localhost:5000/api')
 
 POST - /auth/register
 {

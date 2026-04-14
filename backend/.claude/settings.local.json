@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const p = require\\('pdf-parse'\\); console.log\\(typeof p, typeof p.default, Object.keys\\(p\\).slice\\(0,5\\)\\)\")",
+      "Bash(node -e \"const p = require\\('pdf-parse'\\); console.log\\(Object.keys\\(p\\)\\)\")",
+      "Bash(node -e \"const { PDFParse } = require\\('pdf-parse'\\); const p = new PDFParse\\(\\); console.log\\(Object.getOwnPropertyNames\\(Object.getPrototypeOf\\(p\\)\\)\\)\")",
+      "Bash(node -e ':*)"
+    ]
+  }
+}
