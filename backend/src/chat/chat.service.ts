@@ -1,13 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { EntityManager } from '@mikro-orm/core';
 import { OpenAI } from 'openai';
 import { ConfigService } from '@nestjs/config';
 import { Observable } from 'rxjs';
 import { HelperService } from '@/chat/helper.service';
-import { MessageDto } from '@/chat/dto/message.dto';
+import { MessageDto, MessageResponseDto } from '@/chat/dto/message.dto';
 import { Workspace } from '@/libs/orm/entities/workspace.entity';
 import { Message } from '@/libs/orm/entities/message.entity';
 import { AuthPayload } from '@/auth/types';
+import { HistoryResponseDto } from '@/chat/dto/history.dto';
+import { StreamResponseDto } from '@/chat/dto/stream.dto';
 
 @Injectable()
 export class ChatService {
@@ -26,9 +28,9 @@ export class ChatService {
 
   async saveMessage(
     dto: MessageDto,
-    file: Express.Multer.File,
+    file: Express.Multer.File | undefined,
     user: AuthPayload,
-  ): Promise<{ workspaceId: string }> {
+  ): Promise<MessageResponseDto> {
     const em = this.em.fork();
 
     let workspace: Workspace;
@@ -45,8 +47,15 @@ export class ChatService {
       });
     }
 
+    let messageContent = dto.message;
+    if (file) {
+      this.helperService.validateFile(file);
+      const fileText = await this.helperService.extractTextFromFile(file);
+      messageContent = this.helperService.buildMessageContent(dto.message, file, fileText);
+    }
+
     const userMessage = em.create(Message, {
-      content: dto.message,
+      content: messageContent,
       role: 'user',
       workspace: workspace.id,
     });
@@ -55,7 +64,7 @@ export class ChatService {
     return { workspaceId: workspace.id };
   }
 
-  streamResponse(workspaceId: string, user: AuthPayload): Observable<{ data: string }> {
+  streamResponse(workspaceId: string, user: AuthPayload): Observable<StreamResponseDto> {
     return new Observable((subscriber) => {
       (async () => {
         try {
@@ -78,7 +87,8 @@ export class ChatService {
             })),
           ];
 
-          const model = this.configService.get<string>('OPEN_AI_MODEL') ?? 'gemma4:large';
+          const model =
+            this.configService.get<string>('OPEN_AI_MODEL') ?? 'gemma4:large';
 
           const stream = await this.client.chat.completions.create({
             model,
@@ -112,10 +122,7 @@ export class ChatService {
     });
   }
 
-  async getHistory(
-    workspaceId: string,
-    user: AuthPayload,
-  ): Promise<{ id: string; role: string; content: string; createdAt?: Date }[]> {
+  async getHistory(workspaceId: string, user: AuthPayload): Promise<HistoryResponseDto[]> {
     const em = this.em.fork();
 
     await em.findOneOrFail(Workspace, { id: workspaceId, user: user.id });

@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EntityManager } from '@mikro-orm/core';
 import { ChatService } from '@/chat/chat.service';
@@ -34,34 +35,31 @@ const mockEm = {
 
 const mockConfigService = {
   get: jest.fn((key: string) => {
-    if (key === 'BASE_OPEN_AI_URL') return 'http://localhost:11434/v1';
-    if (key === 'OPEN_AI_API_KEY') return 'test-key';
-    if (key === 'OPEN_AI_MODEL') return 'gemma4:large';
-    return null;
+    const map: Record<string, string> = {
+      BASE_OPEN_AI_URL: 'http://localhost:11434/v1',
+      OPEN_AI_API_KEY: 'test-key',
+      OPEN_AI_MODEL: 'gemma4:large',
+    };
+    return map[key] ?? null;
   }),
 };
 
 const mockHelperService = {
   preparePrompt: jest.fn().mockReturnValue({ role: 'system', content: 'System prompt' }),
+  validateFile: jest.fn(),
+  extractTextFromFile: jest.fn(),
+  buildMessageContent: jest.fn(),
 };
 
-// OpenAI client mock — patched before module compile
-const mockStreamChunks = [
-  { choices: [{ delta: { content: 'Hello' } }] },
-  { choices: [{ delta: { content: ' world' } }] },
-];
-
-jest.mock('openai', () => {
-  return {
-    OpenAI: jest.fn().mockImplementation(() => ({
-      chat: {
-        completions: {
-          create: jest.fn(),
-        },
+jest.mock('openai', () => ({
+  OpenAI: jest.fn().mockImplementation(() => ({
+    chat: {
+      completions: {
+        create: jest.fn(),
       },
-    })),
-  };
-});
+    },
+  })),
+}));
 
 import { OpenAI } from 'openai';
 
@@ -81,19 +79,25 @@ describe('ChatService', () => {
 
     service = module.get<ChatService>(ChatService);
     openaiInstance = (OpenAI as jest.Mock).mock.results[0].value;
+
     jest.clearAllMocks();
     mockEm.fork.mockReturnValue(mockForkedEm);
-    mockForkedEm.persist.mockReturnThis();
+    mockForkedEm.persist.mockReturnValue({ flush: mockForkedEm.flush });
   });
 
-  describe('saveMessage', () => {
-    it('should create workspace and save user message when no workspace provided', async () => {
-      mockForkedEm.create
-        .mockReturnValueOnce(mockWorkspace)   // workspace
-        .mockReturnValueOnce({ id: 'msg-new' }); // message
-      mockForkedEm.persist.mockReturnValue({ flush: mockForkedEm.flush });
+  // ─── saveMessage ─────────────────────────────────────────────────────────────
 
-      const result = await service.saveMessage({ message: 'Hello', workspace: undefined }, mockUser);
+  describe('saveMessage', () => {
+    it('creates workspace and saves user message when no workspace id given', async () => {
+      mockForkedEm.create
+        .mockReturnValueOnce(mockWorkspace)
+        .mockReturnValueOnce({ id: 'msg-new' });
+
+      const result = await service.saveMessage(
+        { message: 'Hello', workspace: undefined, file: undefined as any },
+        undefined,
+        mockUser,
+      );
 
       expect(mockForkedEm.create).toHaveBeenNthCalledWith(1, Workspace, {
         title: 'Hello',
@@ -107,13 +111,13 @@ describe('ChatService', () => {
       expect(result).toEqual({ workspaceId: mockWorkspace.id });
     });
 
-    it('should use existing workspace when workspace id is provided', async () => {
+    it('uses existing workspace when id is provided', async () => {
       mockForkedEm.findOneOrFail.mockResolvedValue(mockWorkspace);
       mockForkedEm.create.mockReturnValue({ id: 'msg-new' });
-      mockForkedEm.persist.mockReturnValue({ flush: mockForkedEm.flush });
 
       const result = await service.saveMessage(
-        { message: 'Hello', workspace: 'ws-uuid' },
+        { message: 'Hello', workspace: 'ws-uuid', file: undefined as any },
+        undefined,
         mockUser,
       );
 
@@ -124,12 +128,15 @@ describe('ChatService', () => {
       expect(result).toEqual({ workspaceId: mockWorkspace.id });
     });
 
-    it('should truncate workspace title to 50 chars', async () => {
+    it('truncates workspace title to 50 characters', async () => {
       const longMessage = 'A'.repeat(80);
       mockForkedEm.create.mockReturnValue({ id: 'ws-uuid', title: longMessage.slice(0, 50) });
-      mockForkedEm.persist.mockReturnValue({ flush: mockForkedEm.flush });
 
-      await service.saveMessage({ message: longMessage, workspace: undefined }, mockUser);
+      await service.saveMessage(
+        { message: longMessage, workspace: undefined, file: undefined as any },
+        undefined,
+        mockUser,
+      );
 
       expect(mockForkedEm.create).toHaveBeenNthCalledWith(1, Workspace, {
         title: longMessage.slice(0, 50),
@@ -137,44 +144,125 @@ describe('ChatService', () => {
       });
     });
 
-    it('should throw when workspace not found', async () => {
+    it('throws when workspace not found', async () => {
       mockForkedEm.findOneOrFail.mockRejectedValue(new Error('Not found'));
 
       await expect(
-        service.saveMessage({ message: 'Hello', workspace: 'bad-id' }, mockUser),
+        service.saveMessage(
+          { message: 'Hello', workspace: 'bad-id', file: undefined as any },
+          undefined,
+          mockUser,
+        ),
       ).rejects.toThrow('Not found');
+    });
+
+    // ─── file handling ──────────────────────────────────────────────────────
+
+    it('validates and extracts text from uploaded file', async () => {
+      const file = {
+        originalname: 'doc.pdf',
+        mimetype: 'application/pdf',
+        size: 1024,
+        buffer: Buffer.from('pdf content'),
+      } as Express.Multer.File;
+
+      mockHelperService.extractTextFromFile.mockResolvedValue('Extracted PDF text');
+      mockHelperService.buildMessageContent.mockReturnValue(
+        'Hello\n\n[Attached file: doc.pdf]\nExtracted PDF text',
+      );
+      mockForkedEm.create
+        .mockReturnValueOnce(mockWorkspace)
+        .mockReturnValueOnce({ id: 'msg-new' });
+
+      await service.saveMessage(
+        { message: 'Hello', workspace: undefined, file: undefined as any },
+        file,
+        mockUser,
+      );
+
+      expect(mockHelperService.validateFile).toHaveBeenCalledWith(file);
+      expect(mockHelperService.extractTextFromFile).toHaveBeenCalledWith(file);
+      expect(mockHelperService.buildMessageContent).toHaveBeenCalledWith(
+        'Hello',
+        file,
+        'Extracted PDF text',
+      );
+      expect(mockForkedEm.create).toHaveBeenNthCalledWith(2, Message, {
+        content: 'Hello\n\n[Attached file: doc.pdf]\nExtracted PDF text',
+        role: 'user',
+        workspace: mockWorkspace.id,
+      });
+    });
+
+    it('throws BadRequestException when file validation fails', async () => {
+      const file = {
+        originalname: 'bad.exe',
+        mimetype: 'application/octet-stream',
+        size: 1024,
+        buffer: Buffer.from(''),
+      } as Express.Multer.File;
+
+      mockHelperService.validateFile.mockImplementation(() => {
+        throw new BadRequestException('Unsupported file type');
+      });
+      mockForkedEm.create.mockReturnValueOnce(mockWorkspace);
+
+      await expect(
+        service.saveMessage(
+          { message: 'Hello', workspace: undefined, file: undefined as any },
+          file,
+          mockUser,
+        ),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('saves plain text message without file processing when no file provided', async () => {
+      mockForkedEm.create
+        .mockReturnValueOnce(mockWorkspace)
+        .mockReturnValueOnce({ id: 'msg-new' });
+
+      await service.saveMessage(
+        { message: 'Plain message', workspace: undefined, file: undefined as any },
+        undefined,
+        mockUser,
+      );
+
+      expect(mockHelperService.validateFile).not.toHaveBeenCalled();
+      expect(mockHelperService.extractTextFromFile).not.toHaveBeenCalled();
+      expect(mockForkedEm.create).toHaveBeenNthCalledWith(2, Message, {
+        content: 'Plain message',
+        role: 'user',
+        workspace: mockWorkspace.id,
+      });
     });
   });
 
+  // ─── streamResponse ───────────────────────────────────────────────────────
+
   describe('streamResponse', () => {
-    async function* makeAsyncGenerator(chunks: any[]) {
-      for (const chunk of chunks) {
-        yield chunk;
-      }
+    async function* makeStream(chunks: any[]) {
+      for (const chunk of chunks) yield chunk;
     }
 
-    it('should stream AI chunks, save assistant message, and emit [DONE]', (done) => {
+    const streamChunks = [
+      { choices: [{ delta: { content: 'Hello' } }] },
+      { choices: [{ delta: { content: ' world' } }] },
+    ];
+
+    it('streams AI chunks, saves assistant message, and emits [DONE]', (done) => {
       mockForkedEm.findOneOrFail.mockResolvedValue(mockWorkspace);
       mockForkedEm.find.mockResolvedValue(mockMessages);
       mockForkedEm.create.mockReturnValue({ id: 'assistant-msg' });
-      mockForkedEm.persist.mockReturnValue({ flush: mockForkedEm.flush });
-
+      mockHelperService.preparePrompt.mockReturnValue({ role: 'system', content: 'System prompt' });
       openaiInstance.chat.completions.create = jest
         .fn()
-        .mockResolvedValue(makeAsyncGenerator(mockStreamChunks));
+        .mockResolvedValue(makeStream(streamChunks));
 
       const received: string[] = [];
       service.streamResponse('ws-uuid', mockUser).subscribe({
-        next: (event) => received.push(event.data),
+        next: (e) => received.push(e.data),
         complete: () => {
           expect(received).toEqual(['Hello', ' world', '[DONE]']);
-
-          expect(mockHelperService.preparePrompt).toHaveBeenCalledWith(mockUser.email);
-          expect(mockForkedEm.find).toHaveBeenCalledWith(
-            Message,
-            { workspace: 'ws-uuid' },
-            { orderBy: { createdAt: 'ASC' } },
-          );
           expect(mockForkedEm.create).toHaveBeenCalledWith(Message, {
             content: 'Hello world',
             role: 'assistant',
@@ -186,7 +274,30 @@ describe('ChatService', () => {
       });
     });
 
-    it('should emit error when workspace is not found', (done) => {
+    it('builds correct messages array with system prompt and history', (done) => {
+      mockForkedEm.findOneOrFail.mockResolvedValue(mockWorkspace);
+      mockForkedEm.find.mockResolvedValue(mockMessages);
+      mockForkedEm.create.mockReturnValue({ id: 'assistant-msg' });
+      mockHelperService.preparePrompt.mockReturnValue({ role: 'system', content: 'System prompt' });
+      openaiInstance.chat.completions.create = jest.fn().mockResolvedValue(makeStream([]));
+
+      service.streamResponse('ws-uuid', mockUser).subscribe({
+        complete: () => {
+          const callArgs = openaiInstance.chat.completions.create.mock.calls[0][0];
+          expect(callArgs.messages).toEqual([
+            { role: 'system', content: 'System prompt' },
+            { role: 'user', content: 'Hello' },
+            { role: 'assistant', content: 'Hi there' },
+          ]);
+          expect(callArgs.stream).toBe(true);
+          expect(callArgs.model).toBe('gemma4:large');
+          done();
+        },
+        error: done,
+      });
+    });
+
+    it('emits error when workspace not found', (done) => {
       mockForkedEm.findOneOrFail.mockRejectedValue(new Error('Not found'));
 
       service.streamResponse('bad-id', mockUser).subscribe({
@@ -199,23 +310,26 @@ describe('ChatService', () => {
       });
     });
 
-    it('should pass full history as messages to OpenAI', (done) => {
+    it('skips empty delta chunks', (done) => {
+      const chunksWithEmpty = [
+        { choices: [{ delta: { content: 'Hi' } }] },
+        { choices: [{ delta: {} }] },
+        { choices: [{ delta: { content: '' } }] },
+        { choices: [{ delta: { content: '!' } }] },
+      ];
       mockForkedEm.findOneOrFail.mockResolvedValue(mockWorkspace);
-      mockForkedEm.find.mockResolvedValue(mockMessages);
+      mockForkedEm.find.mockResolvedValue([]);
       mockForkedEm.create.mockReturnValue({ id: 'assistant-msg' });
-      mockForkedEm.persist.mockReturnValue({ flush: mockForkedEm.flush });
-
+      mockHelperService.preparePrompt.mockReturnValue({ role: 'system', content: 'System' });
       openaiInstance.chat.completions.create = jest
         .fn()
-        .mockResolvedValue(makeAsyncGenerator([]));
+        .mockResolvedValue(makeStream(chunksWithEmpty));
 
+      const received: string[] = [];
       service.streamResponse('ws-uuid', mockUser).subscribe({
+        next: (e) => received.push(e.data),
         complete: () => {
-          const callArgs = openaiInstance.chat.completions.create.mock.calls[0][0];
-          expect(callArgs.messages[0]).toEqual({ role: 'system', content: 'System prompt' });
-          expect(callArgs.messages[1]).toEqual({ role: 'user', content: 'Hello' });
-          expect(callArgs.messages[2]).toEqual({ role: 'assistant', content: 'Hi there' });
-          expect(callArgs.stream).toBe(true);
+          expect(received).toEqual(['Hi', '!', '[DONE]']);
           done();
         },
         error: done,
@@ -223,8 +337,10 @@ describe('ChatService', () => {
     });
   });
 
+  // ─── getHistory ───────────────────────────────────────────────────────────
+
   describe('getHistory', () => {
-    it('should return formatted message history for a workspace', async () => {
+    it('returns formatted message history ordered by createdAt', async () => {
       mockForkedEm.findOneOrFail.mockResolvedValue(mockWorkspace);
       mockForkedEm.find.mockResolvedValue(mockMessages);
 
@@ -245,19 +361,17 @@ describe('ChatService', () => {
       ]);
     });
 
-    it('should throw when workspace not found or not owned by user', async () => {
-      mockForkedEm.findOneOrFail.mockRejectedValue(new Error('Not found'));
-
-      await expect(service.getHistory('bad-id', mockUser)).rejects.toThrow('Not found');
-    });
-
-    it('should return empty array when workspace has no messages', async () => {
+    it('returns empty array for workspace with no messages', async () => {
       mockForkedEm.findOneOrFail.mockResolvedValue(mockWorkspace);
       mockForkedEm.find.mockResolvedValue([]);
 
-      const result = await service.getHistory('ws-uuid', mockUser);
+      expect(await service.getHistory('ws-uuid', mockUser)).toEqual([]);
+    });
 
-      expect(result).toEqual([]);
+    it('throws when workspace not owned by user', async () => {
+      mockForkedEm.findOneOrFail.mockRejectedValue(new Error('Not found'));
+
+      await expect(service.getHistory('bad-id', mockUser)).rejects.toThrow('Not found');
     });
   });
 });

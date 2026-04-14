@@ -27,23 +27,24 @@ describe('ChatController', () => {
   });
 
   describe('POST /chat/message', () => {
-    it('should call service.saveMessage and return workspaceId', async () => {
+    it('should call service.saveMessage with dto, file, and user', async () => {
       mockChatService.saveMessage.mockResolvedValue({ workspaceId: 'ws-uuid' });
 
-      const dto = { message: 'Hello', workspace: undefined };
-      const result = await controller.saveMessage(dto, mockReq);
+      const dto = { message: 'Hello', workspace: undefined, file: undefined as any };
+      const file = { originalname: 'doc.pdf' } as Express.Multer.File;
+      const result = await controller.saveMessage(dto, mockReq, file);
 
-      expect(mockChatService.saveMessage).toHaveBeenCalledWith(dto, mockUser);
+      expect(mockChatService.saveMessage).toHaveBeenCalledWith(dto, file, mockUser);
       expect(result).toEqual({ workspaceId: 'ws-uuid' });
     });
 
     it('should pass workspace id when provided', async () => {
       mockChatService.saveMessage.mockResolvedValue({ workspaceId: 'ws-uuid' });
 
-      const dto = { message: 'Hello', workspace: 'ws-uuid' };
-      await controller.saveMessage(dto, mockReq);
+      const dto = { message: 'Hello', workspace: 'ws-uuid', file: undefined as any };
+      await controller.saveMessage(dto, mockReq, undefined as any);
 
-      expect(mockChatService.saveMessage).toHaveBeenCalledWith(dto, mockUser);
+      expect(mockChatService.saveMessage).toHaveBeenCalledWith(dto, undefined, mockUser);
     });
   });
 

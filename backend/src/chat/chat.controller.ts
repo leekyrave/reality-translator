@@ -11,11 +11,14 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { ChatService } from '@/chat/chat.service';
-import { MessageDto } from '@/chat/dto/message.dto';
+import { MessageDto, MessageResponseDto } from '@/chat/dto/message.dto';
 import { RequestWithUser } from '@/auth/types';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
+import { HistoryResponseDto } from '@/chat/dto/history.dto';
+import { StreamResponseDto } from '@/chat/dto/stream.dto';
+import { FILE_SIZE_LIMIT } from '@/common/constants';
 
 @Controller('chat')
 export class ChatController {
@@ -31,13 +34,16 @@ export class ChatController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: memoryStorage(),
+      limits: {
+        fileSize: FILE_SIZE_LIMIT,
+      },
     }),
   )
   async saveMessage(
     @Body() dto: MessageDto,
     @Req() req: RequestWithUser,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<{ workspaceId: string }> {
+  ): Promise<MessageResponseDto> {
     return this.chatService.saveMessage(dto, file, req.user);
   }
 
@@ -45,12 +51,15 @@ export class ChatController {
   streamResponse(
     @Param('workspaceId') workspaceId: string,
     @Req() req: RequestWithUser,
-  ): Observable<{ data: string }> {
+  ): Observable<StreamResponseDto> {
     return this.chatService.streamResponse(workspaceId, req.user);
   }
 
   @Get('history/:workspaceId')
-  async getHistory(@Param('workspaceId') workspaceId: string, @Req() req: RequestWithUser) {
+  async getHistory(
+    @Param('workspaceId') workspaceId: string,
+    @Req() req: RequestWithUser,
+  ): Promise<HistoryResponseDto[]> {
     return this.chatService.getHistory(workspaceId, req.user);
   }
 }
