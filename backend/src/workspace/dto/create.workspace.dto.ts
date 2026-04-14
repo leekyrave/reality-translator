@@ -2,25 +2,15 @@ import { Exclude, Expose } from 'class-transformer';
 import { IsString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateTemplateDto {
+export class CreateWorkspaceDto {
   @ApiProperty()
   @IsString()
   @Length(1, 64)
   title: string;
-
-  @ApiProperty()
-  @IsString()
-  @Length(1, 64)
-  role: string;
-
-  @ApiProperty()
-  @IsString()
-  @Length(1, 1024)
-  content: string;
 }
 
 @Exclude()
-export class CreateTemplateResponseDto {
+export class CreateWorkspaceResponseDto {
   @Expose()
   id: string;
 }
