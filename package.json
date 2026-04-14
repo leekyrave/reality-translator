@@ -1,0 +1,15 @@
+{
+  "name": "hackathon-prep",
+  "version": "1.0.0",
+  "description": "Utility scripts",
+  "scripts": {
+    "compose:up": "docker-compose -f ./docker-compose.yml up -d",
+    "compose:up-rebuild": "docker-compose -f ./docker-compose.yml up -d --build",
+    "compose:down": "docker-compose -f ./docker-compose.yml down",
+    "compose:restart": "npm run compose:down && npm run compose:up"
+  },
+  "author": "skyfi.stack",
+  "license": "ISC",
+  "dependencies": {
+  }
+}

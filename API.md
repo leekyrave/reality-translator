@@ -8,19 +8,19 @@ password: string;
 }
 
 return {
-success: true,
-data: {}
+    success: true,
+    data: {}
 }
 set cookie automatically
 
 POST: /auth/login
 {
-email: string;
-password: string;
+    email: string;
+    password: string;
 }
 return {
-success: true,
-data: {}
+    success: true,
+    data: {}
 }
 set cookie automatically
 
