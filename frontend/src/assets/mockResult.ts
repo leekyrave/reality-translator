@@ -1,6 +1,6 @@
-import type { ResultData } from '../types/types';
+// import type { ResultData } from '../types';
 
-export const mockUpload: ResultData = {
-  success: true,
-  data: {},
-};
+// export const mockUpload: ResultData = {
+//   success: true,
+//   data: {},
+// };
