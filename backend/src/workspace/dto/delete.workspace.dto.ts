@@ -1,7 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { IsUUID } from 'class-validator';
 
-export class DeleteTemplateDto {}
+export class WorkspaceTemplateDto {}
 
 @Exclude()
-export class DeleteTemplateResponseDto {}
+export class DeleteWorkspaceResponseDto {}
