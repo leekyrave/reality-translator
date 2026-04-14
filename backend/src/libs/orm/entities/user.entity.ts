@@ -1,14 +1,18 @@
 import {
   BeforeCreate,
   BeforeUpdate,
+  Collection,
   Entity,
   EventArgs,
   Index,
+  OneToMany,
   Property,
   wrap,
 } from '@mikro-orm/core';
 import { BaseEntity } from '@/libs/orm/entities';
 import * as argon2 from 'argon2';
+import { Workspace } from '@/libs/orm/entities/workspace.entity';
+import { Template } from '@/libs/orm/entities/template.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -21,6 +25,15 @@ export class User extends BaseEntity {
 
   @Property({ type: 'text' })
   name!: string;
+
+  @OneToMany(() => Workspace, (workspace) => workspace.user)
+  workspaces = new Collection<Workspace>(this);
+
+  @OneToMany(() => Template, (template) => template.user)
+  templates = new Collection<Template>(this);
+
+  @Property({ type: 'text', nullable: true })
+  avatarUrl?: string;
 
   public async hashPassword(password: string): Promise<string> {
     return argon2.hash(password);
