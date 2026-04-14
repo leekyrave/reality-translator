@@ -29,3 +29,10 @@ export type genericType<T> = {
 //     email: "example@example.com",
 //     password: "password123"
 //   }}
+
+export interface SimplificationResult {
+  original_excerpt: string;
+  simplified: string;
+  jargon_terms?: { term: string; definition: string }[];
+  legal_guardrail?: { excerpt: string; warning: string; label: string };
+}

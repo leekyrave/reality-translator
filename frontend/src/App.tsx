@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import WorkspacePage from "./pages/WorkspacePage";
 
 function App() {
   return (
@@ -13,16 +14,20 @@ function App() {
           {/* Public routes */}
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+
+          {/* Workspace — main document simplification page */}
+          <Route path="/workspace" element={<WorkspacePage />} />
 
           {/* Protected route — only for authenticated users */}
-          <Route
+          {/* <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
                 <DashboardPage />
               </ProtectedRoute>
             }
-          />
+          /> */}
 
           {/* Redirect from / to /register */}
           <Route path="/" element={<Navigate to="/register" replace />} />

@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000/api"; // url api
+const BASE_URL = "http://localhost:5000/api"; // url api
 
 // just a request wrapper to handle auth and errors in one place
 async function request<T>(
