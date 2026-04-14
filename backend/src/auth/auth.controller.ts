@@ -1,11 +1,11 @@
 import { AuthService } from '@/auth/auth.service';
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { LoginDto, LoginResponseDto, RegisterDto, RegisterResponseDto } from '@/auth/dto';
 import type { CookieOptions, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtGuard } from '@/auth/guards/jwt.guard';
 import { Public } from '@/auth/decorators/public.decorator';
+import { RequestWithUser } from '@/auth/types';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -65,5 +65,10 @@ export class AuthController {
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('token', this.cookieOptions);
+  }
+
+  @Get('me')
+  me(@Req() req: RequestWithUser) {
+    return this.authService.me(req.user);
   }
 }

@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext.tsx";
+import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
+import {AuthProvider} from "./context/AuthContext.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
@@ -7,34 +7,30 @@ import DashboardPage from "./pages/DashboardPage";
 import WorkspacePage from "./pages/WorkspacePage";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
+    return (
+        <BrowserRouter>
+            <AuthProvider>
+                <Routes>
+                    {/* Public routes */}
+                    <Route path="/register" element={<RegisterPage/>}/>
+                    <Route path="/login" element={<LoginPage/>}/>
 
-          {/* Workspace — main document simplification page */}
-          <Route path="/workspace" element={<WorkspacePage />} />
+                    {/* Protected route — only for authenticated users */}
+                    <Route
+                        path="/dashboard"
+                        element={
+                            <ProtectedRoute>
+                                <WorkspacePage/>
+                            </ProtectedRoute>
+                        }
+                    />
 
-          {/* Protected route — only for authenticated users */}
-          {/* <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          /> */}
-
-          {/* Redirect from / to /register */}
-          <Route path="/" element={<Navigate to="/register" replace />} />
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
-  );
+                    {/* Redirect from / to /register */}
+                    <Route path="/" element={<Navigate to="/register" replace/>}/>
+                </Routes>
+            </AuthProvider>
+        </BrowserRouter>
+    );
 }
 
 export default App;
