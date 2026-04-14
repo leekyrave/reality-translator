@@ -48,7 +48,8 @@ describe('AuthController', () => {
         expect.objectContaining({
           httpOnly: true,
           secure: false,
-          sameSite: 'lax',
+          sameSite: 'strict',
+          maxAge: 86400000,
         }),
       );
       expect(result).toEqual({});

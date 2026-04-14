@@ -7,6 +7,7 @@ import { TemplateModule } from '@/template/template.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from '@/auth/guards/jwt.guard';
 import { WorkspaceModule } from '@/workspace/workspace.module';
+import { ChatModule } from '@/chat/chat.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { WorkspaceModule } from '@/workspace/workspace.module';
     AuthModule,
     TemplateModule,
     WorkspaceModule,
+    ChatModule,
   ],
   controllers: [],
   providers: [
