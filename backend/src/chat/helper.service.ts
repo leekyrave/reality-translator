@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EntityManager } from '@mikro-orm/core';
-import { AuthPayload } from '@/auth/types';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions/completions';
+import * as mammoth from 'mammoth';
+import { PDFParse } from 'pdf-parse';
+import { ALLOWED_TYPES, FILE_SIZE_LIMIT } from '@/common/constants';
 
 @Injectable()
 export class HelperService {
@@ -11,8 +13,8 @@ export class HelperService {
     private readonly em: EntityManager,
   ) {}
 
-  preparePrompt(userName: string) {
-    const prompt: ChatCompletionMessageParam = {
+  preparePrompt(userName: string): ChatCompletionMessageParam {
+    return {
       role: 'system',
       content:
         'You are a helpful assistant that rewrites complex legal and scientific texts into simple, clear language.\n' +
@@ -43,8 +45,6 @@ export class HelperService {
         'INFORMATION ABOUT USER:' +
         `Name: ${userName}`,
     };
-
-    return prompt;
   }
 
   generateTitlePrompt(slicedContent: string): ChatCompletionMessageParam {
@@ -52,5 +52,41 @@ export class HelperService {
       role: 'system',
       content: `Generate title based on content: ${slicedContent}`,
     };
+  }
+
+  validateFile(file: Express.Multer.File): void {
+    if (file.size > FILE_SIZE_LIMIT) {
+      throw new BadRequestException(
+        `File too large. Maximum allowed size is ${FILE_SIZE_LIMIT / 1024 / 1024} MB.`,
+      );
+    }
+    if (!ALLOWED_TYPES.includes(file.mimetype)) {
+      throw new BadRequestException(
+        `Unsupported file type: ${file.mimetype}. Allowed types: ${ALLOWED_TYPES.join(', ')}.`,
+      );
+    }
+  }
+
+  async extractTextFromFile(file: Express.Multer.File): Promise<string> {
+    const { mimetype, buffer } = file;
+
+    if (mimetype === 'application/pdf') {
+      const data = await new PDFParse(buffer).getText();
+      return data.text.trim();
+    }
+
+    if (mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      const result = await mammoth.extractRawText({ buffer });
+      return result.value.trim();
+    }
+
+    return buffer.toString('utf-8').trim();
+  }
+
+  buildMessageContent(userText: string, file?: Express.Multer.File, fileText?: string): string {
+    if (!file || !fileText) {
+      return userText;
+    }
+    return `${userText}\n\n[Attached file: ${file.originalname}]\n${fileText}`;
   }
 }
