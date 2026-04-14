@@ -12,6 +12,7 @@ import { EntityManager, UniqueConstraintViolationException } from '@mikro-orm/co
 import { User } from '@/libs/orm/entities';
 import { AuthPayload, JwtPayload, TokenType } from '@/auth/types';
 import { LoginDto, RegisterDto } from '@/auth/dto';
+import { MeResponseDto } from '@/auth/dto/me.dto';
 
 @Injectable()
 export class AuthService {
@@ -54,7 +55,7 @@ export class AuthService {
     return this.signJwt({ sub: user.id, email: user.email });
   }
 
-  async me(user: AuthPayload): Promise<User> {
+  async me(user: AuthPayload): Promise<MeResponseDto> {
     return await this.em.findOneOrFail(User, { id: user.id });
   }
 
