@@ -69,6 +69,6 @@ export class AuthController {
 
   @Get('me')
   me(@Req() req: RequestWithUser) {
-    return this.authService.me(req.user);
+    return { id: req.user.id, email: req.user.email };
   }
 }
