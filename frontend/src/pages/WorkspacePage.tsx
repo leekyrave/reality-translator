@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import "../styles/workspace.css";
 import { chatApi } from "../api/chat";
 import type { ChatMessage } from "../types";
@@ -31,7 +31,18 @@ async function* readSSEStream(response: Response): AsyncGenerator<string> {
 
     for (const line of lines) {
       if (!line.startsWith("data: ")) continue;
-      const chunk = line.slice(6);
+      const raw = line.slice(6).trim();
+      if (!raw) continue;
+
+      // ResponseInterceptor wraps events: { data: { data: "chunk" }, success: true }
+      let chunk: string;
+      try {
+        const parsed = JSON.parse(raw);
+        chunk = parsed?.data?.data ?? parsed?.data ?? raw;
+      } catch {
+        chunk = raw;
+      }
+
       if (chunk === "[DONE]") return;
       if (chunk) yield chunk;
     }
@@ -40,11 +51,14 @@ async function* readSSEStream(response: Response): AsyncGenerator<string> {
 
 /* ─── component ──────────────────────────────────────── */
 export default function WorkspacePage() {
+  const [searchParams] = useSearchParams();
+  const initialWsId = searchParams.get("id");
+
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(initialWsId);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [streamingContent, setStreamingContent] = useState<string>("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -53,6 +67,17 @@ export default function WorkspacePage() {
 
   const [chatInput, setChatInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Load history when opening an existing workspace
+  useEffect(() => {
+    if (!initialWsId) return;
+    chatApi
+      .getHistory(initialWsId)
+      .then((data) => {
+        setMessages(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {/* workspace may be empty, ignore */});
+  }, [initialWsId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

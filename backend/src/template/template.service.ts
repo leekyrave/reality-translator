@@ -47,6 +47,7 @@ export class TemplateService {
       const template = await this.em.findOneOrFail(Template, { id, user: user.id });
 
       Object.assign(template, dto);
+      await this.em.flush();
       return {
         id: template.id,
       };

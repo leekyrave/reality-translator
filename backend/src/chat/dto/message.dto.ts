@@ -13,9 +13,6 @@ export class MessageDto {
   @IsOptional()
   @IsString()
   workspace?: string;
-
-  @ApiProperty({ type: 'string', format: 'binary' })
-  file: Express.Multer.File;
 }
 
 @Exclude()
