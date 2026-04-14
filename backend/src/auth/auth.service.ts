@@ -32,7 +32,7 @@ export class AuthService {
     } catch (error) {
       if (error instanceof UniqueConstraintViolationException)
         throw new ConflictException('Email already exists');
-
+      this.logger.error(error);
       throw new BadRequestException('Unknown error. Developers notified about this.');
     }
   }

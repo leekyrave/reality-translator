@@ -5,6 +5,7 @@ import type { CookieOptions, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from '@/auth/guards/jwt.guard';
+import { Public } from '@/auth/decorators/public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -29,6 +30,7 @@ export class AuthController {
     type: RegisterResponseDto,
   })
   @ApiResponse({ status: 400, description: 'Bad request' })
+  @Public()
   @Post('register')
   async register(
     @Body() dto: RegisterDto,
@@ -48,6 +50,7 @@ export class AuthController {
     type: LoginResponseDto,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @Public()
   @Post('login')
   async login(
     @Body() dto: LoginDto,
@@ -59,7 +62,6 @@ export class AuthController {
     return {};
   }
 
-  @UseGuards(JwtGuard)
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('token', this.cookieOptions);
