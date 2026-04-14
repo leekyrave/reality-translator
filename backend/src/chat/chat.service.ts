@@ -24,7 +24,11 @@ export class ChatService {
     });
   }
 
-  async saveMessage(dto: MessageDto, user: AuthPayload): Promise<{ workspaceId: string }> {
+  async saveMessage(
+    dto: MessageDto,
+    file: Express.Multer.File,
+    user: AuthPayload,
+  ): Promise<{ workspaceId: string }> {
     const em = this.em.fork();
 
     let workspace: Workspace;
@@ -51,7 +55,7 @@ export class ChatService {
     return { workspaceId: workspace.id };
   }
 
-    streamResponse(workspaceId: string, user: AuthPayload): Observable<{ data: string }> {
+  streamResponse(workspaceId: string, user: AuthPayload): Observable<{ data: string }> {
     return new Observable((subscriber) => {
       (async () => {
         try {
@@ -74,8 +78,7 @@ export class ChatService {
             })),
           ];
 
-          const model =
-            this.configService.get<string>('OPEN_AI_MODEL') ?? 'gemma4:large';
+          const model = this.configService.get<string>('OPEN_AI_MODEL') ?? 'gemma4:large';
 
           const stream = await this.client.chat.completions.create({
             model,
