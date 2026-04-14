@@ -5,7 +5,6 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { ResponseInterceptor } from '@/common/interceptors/response.interceptor';
 import { HttpExceptionFilter } from '@/common/filters/exception.filter';
-import * as cookieParser from 'cookie-parser';
 import expressBasicAuth from 'express-basic-auth';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
