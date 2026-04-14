@@ -30,8 +30,24 @@ const RegisterPage = () => {
       return;
     }
 
-    if (form.password.length < 6) {
-      setValidationError("Password must be at least 6 characters");
+    if (form.password.length < 8) {
+      setValidationError("Password must be at least 8 characters");
+      return;
+    }
+    if (!/[a-z]/.test(form.password)) {
+      setValidationError("Password must contain at least one lowercase letter");
+      return;
+    }
+    if (!/[A-Z]/.test(form.password)) {
+      setValidationError("Password must contain at least one uppercase letter");
+      return;
+    }
+    if (!/[0-9]/.test(form.password)) {
+      setValidationError("Password must contain at least one number");
+      return;
+    }
+    if (!/[^a-zA-Z0-9]/.test(form.password)) {
+      setValidationError("Password must contain at least one symbol");
       return;
     }
 
@@ -142,7 +158,7 @@ const RegisterPage = () => {
                   )}
                 </button>
               </div>
-              <p className="field-hint">At least 12 characters with a mix of letters and numbers.</p>
+              <p className="field-hint">Min 8 chars with uppercase, lowercase, number, and symbol.</p>
             </div>
 
             {/* Checkbox */}

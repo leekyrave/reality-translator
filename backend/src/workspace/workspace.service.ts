@@ -40,6 +40,7 @@ export class WorkspaceService {
       const workspace = await this.em.findOneOrFail(Workspace, { id, user: user.id });
 
       Object.assign(workspace, dto);
+      await this.em.flush();
       return {
         id: workspace.id,
       };

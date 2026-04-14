@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { RequestWithUser } from '@/auth/types';
 import { WorkspaceService } from '@/workspace/workspace.service';
 import { GetWorkspaceResponseDto } from '@/workspace/dto/get.workspace.dto';
@@ -15,6 +15,11 @@ import { DeleteWorkspaceResponseDto } from '@/workspace/dto/delete.workspace.dto
 @Controller('workspace')
 export class WorkspaceController {
   constructor(private readonly workspaceService: WorkspaceService) {}
+
+  @Get()
+  async getAll(@Req() req: RequestWithUser): Promise<GetWorkspaceResponseDto[]> {
+    return this.workspaceService.getAll({}, req.user);
+  }
 
   @Get(':id')
   async getById(

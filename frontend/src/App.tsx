@@ -12,27 +12,30 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Public routes */}
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-
-          {/* Workspace — main document simplification page */}
-          <Route path="/workspace" element={<WorkspacePage />} />
           <Route path="/cards" element={<SimplificationRulesPage />} />
 
-          {/* Protected route — only for authenticated users */}
-          {/* <Route
+
+          <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
                 <DashboardPage />
               </ProtectedRoute>
             }
-          /> */}
+          />
 
-          {/* Redirect from / to /register */}
-          <Route path="/" element={<Navigate to="/register" replace />} />
+          <Route
+            path="/workspace"
+            element={
+              <ProtectedRoute>
+                <WorkspacePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
