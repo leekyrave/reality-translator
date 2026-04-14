@@ -21,3 +21,16 @@ export interface ChatMessage {
   content: string;
   createdAt?: string;
 }
+
+export interface Workspace {
+  id: string;
+  title: string;
+  messagesCount: number;
+}
+
+export interface Template {
+  id: string;
+  title: string;
+  role: string;
+  content: string;
+}

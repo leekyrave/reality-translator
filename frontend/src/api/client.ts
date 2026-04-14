@@ -17,7 +17,9 @@ async function request<T>(
     throw new Error(error.message ?? `Error ${res.status}`);
   }
 
-  return res.json() as Promise<T>;
+  const json = await res.json();
+  // Unwrap ResponseInterceptor envelope: { data: T, success: true }
+  return (json?.data !== undefined ? json.data : json) as T;
 }
 
 async function requestForm<T>(endpoint: string, formData: FormData): Promise<T> {
@@ -25,7 +27,6 @@ async function requestForm<T>(endpoint: string, formData: FormData): Promise<T> 
     method: "POST",
     body: formData,
     credentials: "include",
-    // No Content-Type header — browser sets multipart/form-data with boundary
   });
 
   if (!res.ok) {
@@ -33,11 +34,14 @@ async function requestForm<T>(endpoint: string, formData: FormData): Promise<T> 
     throw new Error(error.message ?? `Error ${res.status}`);
   }
 
-  return res.json() as Promise<T>;
+  const json = await res.json();
+  return (json?.data !== undefined ? json.data : json) as T;
 }
 
 export const apiClient = {
   get: <T>(endpoint: string) => request<T>(endpoint, "GET"),
   post: <T>(endpoint: string, body: unknown) => request<T>(endpoint, "POST", body),
+  patch: <T>(endpoint: string, body: unknown) => request<T>(endpoint, "PATCH", body),
+  delete: <T>(endpoint: string) => request<T>(endpoint, "DELETE"),
   postForm: <T>(endpoint: string, formData: FormData) => requestForm<T>(endpoint, formData),
 };

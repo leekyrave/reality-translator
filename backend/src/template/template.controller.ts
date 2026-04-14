@@ -10,6 +10,11 @@ import { RequestWithUser } from '@/auth/types';
 export class TemplateController {
   constructor(private readonly templateService: TemplateService) {}
 
+  @Get()
+  async getAll(@Req() req: RequestWithUser): Promise<GetTemplateResponseDto[]> {
+    return this.templateService.getAll({}, req.user);
+  }
+
   @Get(':id')
   async getById(
     @Param('id') id: string,

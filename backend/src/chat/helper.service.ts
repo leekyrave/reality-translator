@@ -71,7 +71,7 @@ export class HelperService {
     const { mimetype, buffer } = file;
 
     if (mimetype === 'application/pdf') {
-      const data = await new PDFParse(buffer).getText();
+      const data = await new PDFParse({ data: buffer }).getText();
       return data.text.trim();
     }
 
