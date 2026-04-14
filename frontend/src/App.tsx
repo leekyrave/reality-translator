@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import WorkspacePage from "./pages/WorkspacePage";
+import SimplificationRulesPage from "./pages/SimplificationRulesPage.tsx";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
 
           {/* Workspace — main document simplification page */}
           <Route path="/workspace" element={<WorkspacePage />} />
+          <Route path="/cards" element={<SimplificationRulesPage />} />
 
           {/* Protected route — only for authenticated users */}
           {/* <Route

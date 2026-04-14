@@ -11,7 +11,7 @@ type UploadState = "idle" | "uploading" | "done" | "error";
 const NAV = [
   { icon: "💬", label: "Recent Chats", to: "/workspace", active: true },
   { icon: "🗂", label: "Document Vault", to: "/vault" },
-  { icon: "✏️", label: "Simplification Rules", to: "/rules" },
+  { icon: "✏️", label: "Simplification Rules", to: "/cards" },
   { icon: "👥", label: "Team Assets", to: "/team" },
   { icon: "🕐", label: "Archive", to: "/archive" },
 ];
