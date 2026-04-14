@@ -1,93 +1,191 @@
-# hackathon-template
+## 🇵🇱 **Polska Wersja**
+
+# Hackathon 2026 – Repozytorium Zespołu
+
+Witamy w oficjalnym repozytorium zespołu biorącego udział w hackathonie **Hackathon 2026**.  
+To repozytorium służy jako główne miejsce przechowywania **całego kodu, dokumentacji oraz zasobów** tworzonych podczas wydarzenia.
+
+---
+
+## 📁 Informacje ogólne o repozytorium
+
+- Każdy zespół posiada **dedykowane repozytorium** oraz **indywidualny Access Token**.
+- Access Token służy do wykonywania operacji `push`, `pull` i zarządzania kodem.
+- Tokeny są ważne **do godziny 06:00**, kiedy zostaną automatycznie wycofane.
+- Wszelkie prace projektowe muszą być przechowywane w tym repozytorium.
+- **Główne zadanie znajduje się w pliku `MAIN_TASK.md`**
+- W katalogu `examples` znajduje się snippet kodu do wykorzystania w zadaniach.
+
+---
+
+## 🔀 Struktura pracy i zasady dotyczące branchy
+
+- Głównym, ocenianym branchem jest **master**.
+- Tylko zawartość znajdująca się na branchu **master** będzie brana pod uwagę podczas oceny.
+- Można tworzyć dodatkowe branche (np. `feature/...`, `fix/...`, `dev`), jednak:
+  - wszystkie finalne zmiany muszą zostać zmergowane do **master** przed 06:00,
+  - merge requesty lub merge bezpośredni zależą od wewnętrznych ustaleń zespołu.
+
+---
+
+## ⏱️ Częstotliwość commitów i aktywność repozytorium
+
+Aby umożliwić organizatorom monitorowanie postępów:
+
+- Każdy zespół musi wykonywać **co najmniej jeden push co 2 godziny**.
+- Zalecenie: push **o pełnych parzystych godzinach** (np. 20:00, 22:00, 00:00, 02:00...).
+- Regularne pushowanie:
+  - minimalizuje ryzyko utraty pracy,
+  - dokumentuje postępy zespołu,
+  - ułatwia rozwiązywanie konfliktów merge.
+
+---
+
+## 🛠️ Technologie i narzędzia
+
+- Uczestnicy mogą korzystać z **dowolnych technologii, języków programowania, frameworków i narzędzi**.
+- Dozwolone są rozwiązania open source oraz komercyjne (zgodnie z licencją).
+- Wybór technologii pozostaje całkowicie w gestii zespołu.
+- **Zabronione jest korzystanie z narzędzi AI do generowania rozwiązania**
+
+---
+
+## ⏰ Ramy czasowe Hackathonu
+
+- Start wydarzenia: **18:00**
+- Koniec wydarzenia: **06:00 (następnego dnia)**
+- O godzinie **06:00 wszystkie Access Tokeny zostaną wycofane**.
+- Cała praca musi być umieszczona na branchu **master** przed godziną 06:00.
+
+---
+
+## 🌟 Dobre praktyki – zalecenia
+
+### Jakość kodu
+- Stosuj standardy kodowania odpowiednie dla wybranego języka (PEP8, PSR-12, Google Style Guide itd.).
+- Używaj czytelnych i znaczących nazw zmiennych, funkcji, klas i plików.
+- Komentuj złożoną logikę.
+- Dziel projekt na moduły, unikaj jednego monolitycznego pliku.
+
+### Dobre praktyki dla repozytorium
+- Twórz przejrzyste komunikaty commitów (np. „Dodano moduł logowania”, „Naprawiono błąd uwierzytelniania API”).
+- Wykorzystuj `.gitignore`, aby nie umieszczać w repo plików tymczasowych, logów, artefaktów buildów itp.
+- Jeśli projekt wymaga instalacji lub konfiguracji, dodaj instrukcję uruchamiania (README lub `INSTALL.md`).
+
+### Praca zespołowa
+- Podziel role wewnątrz zespołu (backend, frontend, testy, dokumentacja itp.).
+- Komunikuj problemy na bieżąco — hackathon to szybkie środowisko pracy.
+- Ustal workflow Gita (np. dev → master, feature branches).
+
+### Dobre praktyki techniczne
+- Waliduj dane wejściowe.
+- Obsługuj błędy i sytuacje wyjątkowe.
+- Jeśli tworzycie API — dodajcie chociaż podstawową dokumentację (OpenAPI/Swagger lub opis w Markdown).
+- Rozważcie dodanie logowania, jeśli ma to znaczenie dla projektu.
+
+---
+
+## 📞 Kontakt z organizatorami
+
+W przypadku problemów technicznych (repozytoria, dostęp, tokeny), prosimy o kontakt poprzez oficjalne kanały komunikacyjne hackathonu **Hackathon 2026**.
+
+---
+
+**Powodzenia i świetnej zabawy! 🚀**  
+Niech wygra najlepszy projekt!
 
 
+## 🇬🇧 **English Version**
 
-## Getting started
+# Hackathon 2026 – Team Repository
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Welcome to the official repository for your team participating in the **Hackathon 2026 Hackathon**.  
+This repository serves as the main storage for **all code, documentation, and project resources** created during the event.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+---
 
-## Add your files
+## 📁 General Repository Information
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+- Each team receives a **dedicated repository** and an **individual Access Token**.
+- Use your Access Token to perform `push`, `pull`, and manage your code.
+- All Access Tokens are valid **until 06:00**, when they will be automatically revoked.
+- All project work, results, and final code must be stored exclusively in this repository.
+- **The main task is located in the `MAIN_TASK.md` file.**
+- **A code snippet for use in the tasks can be found in the `examples` directory.**
+---
 
-```
-cd existing_repo
-git remote add origin https://orkan.tu.kielce.pl/gitlab/hackathon-2026/project-templates/hackathon-template.git
-git branch -M master
-git push -uf origin master
-```
+## 🔀 Branch Structure and Rules
 
-## Integrate with your tools
+- The main branch for evaluation is **master**.
+- Only the content located in the **master** branch will be assessed by the organizers.
+- You may create additional branches (e.g., `feature/...`, `fix/...`, `dev`), but:
+  - all final changes must be merged into **master** before 06:00,
+  - use merge requests or direct merges depending on team workflow.
 
-* [Set up project integrations](https://orkan.tu.kielce.pl/gitlab/hackathon-2026/project-templates/hackathon-template/-/settings/integrations)
+---
 
-## Collaborate with your team
+## ⏱️ Commit Frequency and Repository Activity
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+To help organizers track progress:
 
-## Test and Deploy
+- Each team must perform **at least one push every 2 hours**.
+- Recommended practice: push **at every second full hour** (e.g., 20:00, 22:00, 00:00, 02:00...).
+- Regular pushing:
+  - reduces the risk of losing work,
+  - helps document team progress,
+  - makes it easier to handle merge conflicts.
 
-Use the built-in continuous integration in GitLab.
+---
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+## 🛠️ Technologies and Tools
 
-***
+- You are free to use **any technology, programming language, framework, or tool**.
+- Both open-source and commercial tools are allowed, as long as licensing is respected.
+- Technology selection is entirely up to your team.
+- **The use of AI tools for solution generation is forbidden.**
 
-# Editing this README
+---
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## ⏰ Hackathon Timeline
 
-## Suggestions for a good README
+- Hackathon start: **18:00**
+- Hackathon end: **06:00 (next day)**
+- At **06:00**, all Access Tokens will be revoked.
+- All final work must be pushed to the **master** branch before 06:00.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+---
 
-## Name
-Choose a self-explaining name for your project.
+## 🌟 Best Practices – Technical and Organizational Guidelines
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+### Code Quality
+- Follow language-specific style guides (PEP8, PSR-12, Google Style Guide, etc.).
+- Use clear and meaningful names for variables, functions, and modules.
+- Comment complex logic when needed.
+- Split the code base into logical modules — avoid monolithic files.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Repository Good Practices
+- Write clean commit messages (e.g., “Add login module”, “Fix API authentication bug”).
+- Use `.gitignore` to exclude temporary files, logs, and build artifacts.
+- Provide installation or run instructions if needed (README section or `INSTALL.md`).
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### Teamwork Practices
+- Assign internal roles (backend, frontend, documentation, testing, etc.).
+- Communicate frequently — this is a fast-paced event.
+- Agree on Git workflow rules (e.g., dev → master, feature branches).
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### Technical Good Practices
+- Validate input data.
+- Handle errors properly.
+- If building an API, include minimal documentation (OpenAPI/Swagger or Markdown).
+- Add logging if relevant and helpful.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+---
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+## 📞 Contact with Organizers
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+For repository or access issues, please contact the organizers through the official **Hackathon 2026** communication channels.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+---
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+**Good luck and have fun! 🚀**  
+May the best project win!
