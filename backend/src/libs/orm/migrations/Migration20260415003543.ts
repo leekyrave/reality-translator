@@ -1,6 +1,6 @@
-generateTitlePromptimport { Migration } from '@mikro-orm/migrations';
+import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20260415000000 extends Migration {
+export class Migration20260415003543 extends Migration {
 
   override async up(): Promise<void> {
     this.addSql(`alter table "template" add column "is_default" boolean not null default false;`);
