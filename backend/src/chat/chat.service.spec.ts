@@ -26,6 +26,7 @@ const mockForkedEm = {
   persist: jest.fn().mockReturnThis(),
   flush: jest.fn(),
   find: jest.fn(),
+  findOne: jest.fn().mockResolvedValue(null),
   findOneOrFail: jest.fn(),
 };
 

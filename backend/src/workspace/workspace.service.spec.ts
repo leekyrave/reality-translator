@@ -3,17 +3,15 @@ import { ConflictException } from '@nestjs/common';
 import { EntityManager } from '@mikro-orm/core';
 import { WorkspaceService } from '@/workspace/workspace.service';
 import { Workspace } from '@/libs/orm/entities/workspace.entity';
+import { Message } from '@/libs/orm/entities/message.entity';
 import { AuthPayload } from '@/auth/types';
 
 const mockUser: AuthPayload = { id: 'user-uuid', email: 'test@test.com' };
-
-const mockMessages = { count: jest.fn().mockReturnValue(3) };
 
 const mockWorkspace = {
   id: 'workspace-uuid',
   title: 'My Workspace',
   user: mockUser.id,
-  messages: mockMessages,
 };
 
 const mockEm = {
@@ -23,6 +21,7 @@ const mockEm = {
   find: jest.fn(),
   findOneOrFail: jest.fn(),
   nativeDelete: jest.fn(),
+  count: jest.fn().mockResolvedValue(3),
 };
 
 describe('WorkspaceService', () => {
@@ -38,7 +37,7 @@ describe('WorkspaceService', () => {
 
     service = module.get<WorkspaceService>(WorkspaceService);
     jest.clearAllMocks();
-    mockMessages.count.mockReturnValue(3);
+    mockEm.count.mockResolvedValue(3);
   });
 
   describe('create', () => {
@@ -118,10 +117,12 @@ describe('WorkspaceService', () => {
   describe('getAll', () => {
     it('should return all workspaces for the user with message count', async () => {
       mockEm.find.mockResolvedValue([mockWorkspace]);
+      mockEm.count.mockResolvedValue(3);
 
       const result = await service.getAll({}, mockUser);
 
       expect(mockEm.find).toHaveBeenCalledWith(Workspace, { user: mockUser.id });
+      expect(mockEm.count).toHaveBeenCalledWith(Message, { workspace: mockWorkspace.id });
       expect(result).toEqual([
         {
           id: mockWorkspace.id,
@@ -149,6 +150,7 @@ describe('WorkspaceService', () => {
   describe('getById', () => {
     it('should return a workspace by id with message count', async () => {
       mockEm.findOneOrFail.mockResolvedValue(mockWorkspace);
+      mockEm.count.mockResolvedValue(3);
 
       const result = await service.getById(mockWorkspace.id, mockUser);
 
@@ -156,6 +158,7 @@ describe('WorkspaceService', () => {
         id: mockWorkspace.id,
         user: mockUser.id,
       });
+      expect(mockEm.count).toHaveBeenCalledWith(Message, { workspace: mockWorkspace.id });
       expect(result).toEqual({
         id: mockWorkspace.id,
         title: mockWorkspace.title,

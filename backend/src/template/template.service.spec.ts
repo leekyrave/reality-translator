@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { EntityManager } from '@mikro-orm/core';
+import { ConfigService } from '@nestjs/config';
 import { TemplateService } from '@/template/template.service';
 import { Template } from '@/libs/orm/entities/template.entity';
 import { AuthPayload } from '@/auth/types';
@@ -13,6 +14,7 @@ const mockTemplate = {
   role: 'assistant',
   content: 'Hello {{name}}',
   user: mockUser.id,
+  isDefault: false,
 };
 
 const mockEm = {
@@ -22,6 +24,18 @@ const mockEm = {
   find: jest.fn(),
   findOneOrFail: jest.fn(),
   nativeDelete: jest.fn(),
+  nativeUpdate: jest.fn().mockResolvedValue(undefined),
+};
+
+const mockConfigService = {
+  get: jest.fn((key: string) => {
+    const map: Record<string, string> = {
+      BASE_OPEN_AI_URL: 'http://localhost:11434/v1',
+      OPEN_AI_API_KEY: 'test-key',
+      OPEN_AI_MODEL: 'test-model',
+    };
+    return map[key] ?? null;
+  }),
 };
 
 describe('TemplateService', () => {
@@ -32,6 +46,7 @@ describe('TemplateService', () => {
       providers: [
         TemplateService,
         { provide: EntityManager, useValue: mockEm },
+        { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compile();
 
@@ -53,6 +68,7 @@ describe('TemplateService', () => {
         title: 'My Template',
         role: 'assistant',
         content: 'Hello {{name}}',
+        isDefault: false,
         user: mockUser.id,
       });
       expect(result).toEqual({ id: mockTemplate.id });
@@ -134,6 +150,7 @@ describe('TemplateService', () => {
           title: mockTemplate.title,
           content: mockTemplate.content,
           role: mockTemplate.role,
+          isDefault: mockTemplate.isDefault,
         },
       ]);
     });
@@ -168,6 +185,7 @@ describe('TemplateService', () => {
         title: mockTemplate.title,
         content: mockTemplate.content,
         role: mockTemplate.role,
+        isDefault: mockTemplate.isDefault,
       });
     });
 

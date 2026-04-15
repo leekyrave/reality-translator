@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { UniqueConstraintViolationException } from '@mikro-orm/core';
 import { User } from '@/libs/orm/entities';
+import { TemplateService } from '@/template/template.service';
 
 const mockUser = {
   id: 'uuid-123',
@@ -35,6 +36,10 @@ const mockConfigService = {
   get: jest.fn(),
 };
 
+const mockTemplateService = {
+  seedForUser: jest.fn().mockResolvedValue(undefined),
+};
+
 describe('AuthService', () => {
   let service: AuthService;
 
@@ -45,6 +50,7 @@ describe('AuthService', () => {
         { provide: EntityManager, useValue: mockEm },
         { provide: JwtService, useValue: mockJwtService },
         { provide: ConfigService, useValue: mockConfigService },
+        { provide: TemplateService, useValue: mockTemplateService },
       ],
     }).compile();
 
