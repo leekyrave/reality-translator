@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager } from '@mikro-orm/core';
 import { AuthPayload } from '@/auth/types';
+import { Message } from '@/libs/orm/entities/message.entity';
 import {
   CreateWorkspaceDto,
   CreateWorkspaceResponseDto,
@@ -61,13 +62,16 @@ export class WorkspaceService {
     }
   }
 
-  async getAll(dto: GetWorkspaceDto, user: AuthPayload): Promise<GetWorkspaceResponseDto[]> {
+  async getAll(_dto: GetWorkspaceDto, user: AuthPayload): Promise<GetWorkspaceResponseDto[]> {
     try {
       const workspaces = await this.em.find(Workspace, { user: user.id });
-      return workspaces.map((workspace) => ({
+      const counts = await Promise.all(
+        workspaces.map((ws) => this.em.count(Message, { workspace: ws.id })),
+      );
+      return workspaces.map((workspace, i) => ({
         id: workspace.id,
         title: workspace.title,
-        messagesCount: workspace.messages.count(),
+        messagesCount: counts[i],
       }));
     } catch (error: any) {
       throw new ConflictException('Failed to get workspaces');
@@ -77,10 +81,11 @@ export class WorkspaceService {
   async getById(id: string, user: AuthPayload): Promise<GetWorkspaceResponseDto> {
     try {
       const workspace = await this.em.findOneOrFail(Workspace, { id, user: user.id });
+      const messagesCount = await this.em.count(Message, { workspace: id });
       return {
         id: workspace.id,
         title: workspace.title,
-        messagesCount: workspace.messages.count(),
+        messagesCount,
       };
     } catch (error: any) {
       if (error instanceof NotFoundException)

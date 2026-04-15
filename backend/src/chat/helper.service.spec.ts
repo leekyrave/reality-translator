@@ -5,7 +5,6 @@ import { EntityManager } from '@mikro-orm/core';
 import { HelperService } from '@/chat/helper.service';
 import { ALLOWED_TYPES, FILE_SIZE_LIMIT } from '@/common/constants';
 
-// ─── module mocks ─────────────────────────────────────────────────────────────
 
 jest.mock('mammoth', () => ({
   extractRawText: jest.fn(),
@@ -18,7 +17,6 @@ jest.mock('pdf-parse', () => ({
 import * as mammoth from 'mammoth';
 import { PDFParse } from 'pdf-parse';
 
-// ─── helpers ──────────────────────────────────────────────────────────────────
 
 function makeFile(overrides: Partial<Express.Multer.File>): Express.Multer.File {
   return {
@@ -36,7 +34,6 @@ function makeFile(overrides: Partial<Express.Multer.File>): Express.Multer.File 
   };
 }
 
-// ─── suite ────────────────────────────────────────────────────────────────────
 
 describe('HelperService', () => {
   let service: HelperService;
@@ -54,7 +51,6 @@ describe('HelperService', () => {
     jest.clearAllMocks();
   });
 
-  // ─── preparePrompt ──────────────────────────────────────────────────────────
 
   describe('preparePrompt', () => {
     it('returns system role prompt containing the user name', () => {
@@ -64,7 +60,6 @@ describe('HelperService', () => {
     });
   });
 
-  // ─── generateTitlePrompt ────────────────────────────────────────────────────
 
   describe('generateTitlePrompt', () => {
     it('includes the content slice in the prompt', () => {
@@ -74,7 +69,6 @@ describe('HelperService', () => {
     });
   });
 
-  // ─── validateFile ───────────────────────────────────────────────────────────
 
   describe('validateFile', () => {
     it('does not throw for a valid PDF within size limit', () => {
@@ -98,7 +92,6 @@ describe('HelperService', () => {
     });
   });
 
-  // ─── extractTextFromFile ────────────────────────────────────────────────────
 
   describe('extractTextFromFile', () => {
     it('extracts text from a DOCX file', async () => {
@@ -148,7 +141,6 @@ describe('HelperService', () => {
     });
   });
 
-  // ─── buildMessageContent ────────────────────────────────────────────────────
 
   describe('buildMessageContent', () => {
     it('returns plain user text when no file provided', () => {

@@ -36,9 +36,17 @@ export class HelperService {
       '- If the request is unrelated or unsafe, politely refuse.\n' +
       '\n' +
       'STYLE:\n' +
-      '- Keep explanations clear and simple.\n' +
-      '- Avoid unnecessary verbosity.\n' +
+      'Always respond using simple, clean HTML only.\n' +
       '\n' +
+      'Rules:\n' +
+      '- Use only basic HTML tags: <ul>, <ol>, <li>, <table>, <tr>, <td>, <th>, <p>, <strong>, <code>, <pre>, <h3>, <h4>\n' +
+      '- No CSS, no styles, no classes, no inline styling\n' +
+      '- No decorative elements, no divs for layout\n' +
+      '- Use <ul>/<li> for lists, <table> for structured data, <code> for inline code, <pre><code> for code blocks\n' +
+      '- Keep responses concise and structured\n' +
+      '- No markdown, no plain text — only HTML tags' +
+      '\n' +
+      'OUTPUT FORMAT: USE HTML tags output with UI/UX Pretty tags' +
       'INFORMATION ABOUT USER:\n' +
       `Name: ${userName}`;
 

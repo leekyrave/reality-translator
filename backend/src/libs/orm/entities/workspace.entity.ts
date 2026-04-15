@@ -10,6 +10,7 @@ import {
 import { User } from '@/libs/orm/entities/user.entity';
 import { BaseEntity } from '@/libs/orm/entities';
 import { Message } from '@/libs/orm/entities/message.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Workspace extends BaseEntity {

@@ -11,7 +11,7 @@ export const templateApi = {
   create: (body: { title: string; role: string; content: string }) =>
     apiClient.post<{ id: string }>("/template", body),
 
-  update: (id: string, body: { title?: string; role?: string; content?: string }) =>
+  update: (id: string, body: { title?: string; role?: string; content?: string; isDefault?: boolean }) =>
     apiClient.patch<{ id: string }>(`/template/${id}`, body),
 
   delete: (id: string) =>

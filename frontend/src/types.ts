@@ -33,4 +33,5 @@ export interface Template {
   title: string;
   role: string;
   content: string;
+  isDefault: boolean;
 }

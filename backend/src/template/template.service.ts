@@ -25,8 +25,6 @@ export class TemplateService {
 
   async create(dto: CreateTemplateDto, user: AuthPayload): Promise<CreateTemplateResponseDto> {
     try {
-      const isVerifiedData = await this.verifyTemplatesPrompt(dto.content);
-      if (!isVerifiedData.verified) throw new ConflictException('Template is not verified');
       const template = this.em.create(Template, {
         ...dto,
         isDefault: false,
@@ -37,6 +35,7 @@ export class TemplateService {
         id: template.id,
       };
     } catch (error) {
+      console.log(error);
       throw new ConflictException('Failed to create template');
     }
   }
@@ -48,15 +47,17 @@ export class TemplateService {
     try {
       const template = await this.em.findOneOrFail(Template, { id, user: user.id });
 
-      if (dto.isDefault === true) {
+      if (dto.isDefault) {
         await this.em.nativeUpdate(
           Template,
           { user: user.id, isDefault: true },
           { isDefault: false },
         );
       }
-
-      Object.assign(template, dto);
+      const updateFields = Object.fromEntries(
+        Object.entries(dto).filter(([, value]) => value !== undefined),
+      );
+      Object.assign(template, updateFields);
       await this.em.flush();
       return {
         id: template.id,
@@ -64,6 +65,7 @@ export class TemplateService {
     } catch (error: any) {
       if (error instanceof NotFoundException)
         throw new NotFoundException('Template not found', 'Template not found');
+      console.error(error);
       throw new ConflictException('Failed to update template');
     }
   }

@@ -53,7 +53,7 @@ const RegisterPage = () => {
 
     try {
       await register({ name: form.name, email: form.email, password: form.password });
-      navigate("/dashboard");
+      navigate("/workspace");
     } catch {
       // error is already handled in context
     }

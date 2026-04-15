@@ -17,7 +17,7 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       await login({ email: form.email, password: form.password });
-      navigate("/dashboard");
+      navigate("/workspace");
     } catch {
       // error is already handled in context
     }

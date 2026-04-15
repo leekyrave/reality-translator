@@ -85,7 +85,6 @@ describe('ChatService', () => {
     mockForkedEm.persist.mockReturnValue({ flush: mockForkedEm.flush });
   });
 
-  // ─── saveMessage ─────────────────────────────────────────────────────────────
 
   describe('saveMessage', () => {
     it('creates workspace and saves user message when no workspace id given', async () => {
@@ -156,7 +155,6 @@ describe('ChatService', () => {
       ).rejects.toThrow('Not found');
     });
 
-    // ─── file handling ──────────────────────────────────────────────────────
 
     it('validates and extracts text from uploaded file', async () => {
       const file = {
@@ -237,7 +235,6 @@ describe('ChatService', () => {
     });
   });
 
-  // ─── streamResponse ───────────────────────────────────────────────────────
 
   describe('streamResponse', () => {
     async function* makeStream(chunks: any[]) {
@@ -337,7 +334,6 @@ describe('ChatService', () => {
     });
   });
 
-  // ─── getHistory ───────────────────────────────────────────────────────────
 
   describe('getHistory', () => {
     it('returns formatted message history ordered by createdAt', async () => {
