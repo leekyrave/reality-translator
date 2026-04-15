@@ -7,7 +7,7 @@ import {MdOutlineUploadFile} from "react-icons/md";
 import {CiFileOn} from "react-icons/ci";
 import AppSidebar from "../components/AppSidebar";
 import {useAuth} from "../context/AuthContext.tsx";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 /* ─── SSE stream reader ───────────────────────────────── */
 async function* readSSEStream(response: Response): AsyncGenerator<string> {
@@ -86,7 +86,7 @@ export default function WorkspacePage() {
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.title) setDefaultTemplate(data.title.toUpperCase());
+                    if (data.data.title) setDefaultTemplate(data.data.title.toUpperCase());
                 }
             } catch (err) {
                 console.error("Failed to fetch default template:", err);
