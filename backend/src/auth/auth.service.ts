@@ -13,6 +13,7 @@ import { User } from '@/libs/orm/entities';
 import { AuthPayload, JwtPayload, TokenType } from '@/auth/types';
 import { LoginDto, RegisterDto } from '@/auth/dto';
 import { MeResponseDto } from '@/auth/dto/me.dto';
+import { TemplateService } from '@/template/template.service';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
     private readonly em: EntityManager,
+    private readonly templateService: TemplateService,
   ) {}
 
   async register({ email, password, name }: RegisterDto): Promise<TokenType> {
@@ -28,6 +30,8 @@ export class AuthService {
       const user = this.em.create(User, { email, password, name });
 
       await this.em.persist(user).flush();
+
+      await this.templateService.seedForUser(user.id);
 
       return this.signJwt({ sub: user.id, email: user.email });
     } catch (error) {

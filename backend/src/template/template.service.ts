@@ -1,13 +1,14 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTemplateDto, CreateTemplateResponseDto } from '@/template/dto/create.template.dto';
 import { UpdateTemplateDto, UpdateTemplateResponseDto } from '@/template/dto/update.template.dto';
-import { DeleteTemplateDto, DeleteTemplateResponseDto } from '@/template/dto/delete.template.dto';
+import { DeleteTemplateResponseDto } from '@/template/dto/delete.template.dto';
 import { EntityManager } from '@mikro-orm/core';
 import { Template } from '@/libs/orm/entities/template.entity';
 import { GetTemplateDto, GetTemplateResponseDto } from '@/template/dto/get.template.dto';
 import { AuthPayload } from '@/auth/types';
 import { OpenAI } from 'openai';
 import { ConfigService } from '@nestjs/config';
+import { DEFAULT_TEMPLATES } from '@/common/constants';
 
 @Injectable()
 export class TemplateService {
@@ -107,6 +108,13 @@ export class TemplateService {
         throw new NotFoundException('Template not found', 'Template not found');
       throw new ConflictException('Failed to get template');
     }
+  }
+
+  async seedForUser(userId: string): Promise<void> {
+    const templates = DEFAULT_TEMPLATES.map((t) =>
+      this.em.create(Template, { ...t, user: userId, isDefault: false }),
+    );
+    await this.em.persistAndFlush(templates);
   }
 
   async verifyTemplatesPrompt(content: string): Promise<{ verified: boolean }> {

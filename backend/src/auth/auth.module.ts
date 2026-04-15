@@ -6,6 +6,8 @@ import type { StringValue } from 'ms';
 import { AuthService } from '@/auth/auth.service';
 import { AuthController } from '@/auth/auth.controller';
 import { JwtGuard } from '@/auth/guards/jwt.guard';
+import { TemplateModule } from '@/template/template.module';
+
 @Module({
   imports: [
     JwtModule.registerAsync({
@@ -16,6 +18,7 @@ import { JwtGuard } from '@/auth/guards/jwt.guard';
         signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN') as StringValue },
       }),
     }),
+    TemplateModule,
   ],
   providers: [AuthService, JwtStrategy, JwtGuard],
   controllers: [AuthController],
