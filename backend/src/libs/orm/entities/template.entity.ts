@@ -15,4 +15,7 @@ export class Template extends BaseEntity {
 
   @ManyToOne(() => User)
   user: string;
+
+  @Property({ type: 'boolean', default: false })
+  isDefault: boolean = false;
 }

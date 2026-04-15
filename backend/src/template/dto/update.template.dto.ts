@@ -1,6 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
-import { IsOptional, IsString, IsUUID, Length } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsOptional, IsString, IsUUID, Length } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateTemplateDto {
   @ApiProperty()
@@ -20,6 +20,11 @@ export class UpdateTemplateDto {
   @IsString()
   @Length(1, 1024)
   content: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  isDefault: boolean;
 }
 
 @Exclude()

@@ -7,6 +7,7 @@ import { HelperService } from '@/chat/helper.service';
 import { MessageDto, MessageResponseDto } from '@/chat/dto/message.dto';
 import { Workspace } from '@/libs/orm/entities/workspace.entity';
 import { Message } from '@/libs/orm/entities/message.entity';
+import { Template } from '@/libs/orm/entities/template.entity';
 import { AuthPayload } from '@/auth/types';
 import { HistoryResponseDto } from '@/chat/dto/history.dto';
 import { StreamResponseDto } from '@/chat/dto/stream.dto';
@@ -78,7 +79,14 @@ export class ChatService {
             { orderBy: { createdAt: 'ASC' } },
           );
 
-          const systemPrompt = this.helperService.preparePrompt(user.email ?? 'User');
+          const defaultTemplate = await em.findOne(Template, {
+            user: user.id,
+            isDefault: true,
+          });
+          const systemPrompt = this.helperService.preparePrompt(
+            user.email ?? 'User',
+            defaultTemplate?.content,
+          );
           const messages = [
             systemPrompt,
             ...history.map((m) => ({
