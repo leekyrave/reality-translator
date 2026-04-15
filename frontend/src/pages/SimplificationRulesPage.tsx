@@ -195,10 +195,8 @@ const SimplificationRulesPage = () => {
   const openEdit = (r: Rule) => { setModal({ rule: r, id: r.id }); setActionError(null); };
   const closeModal = () => setModal(null);
 
-  /* ── Create / Update ────────────────────────────────────── */
   const handleSave = async (form: Omit<Rule, "id" | "isDefault">) => {
     if (modal?.id) {
-      // Update
       await templateApi.update(modal.id, {
         title: form.title,
         role: form.persona,
@@ -208,7 +206,6 @@ const SimplificationRulesPage = () => {
         rs.map((r) => (r.id === modal.id ? { ...r, ...form } : r)),
       );
     } else {
-      // Create
       const { id } = await templateApi.create({
         title: form.title,
         role: form.persona,
@@ -218,7 +215,6 @@ const SimplificationRulesPage = () => {
     }
   };
 
-  /* ── Delete ─────────────────────────────────────────────── */
   const handleDelete = async (id: string) => {
     try {
       await templateApi.delete(id);
@@ -230,7 +226,6 @@ const SimplificationRulesPage = () => {
     }
   };
 
-  /* ── Set default ────────────────────────────────────────── */
   const handleSetDefault = async (id: string) => {
     try {
       await templateApi.update(id, { isDefault: true });

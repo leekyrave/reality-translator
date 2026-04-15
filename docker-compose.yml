@@ -28,20 +28,20 @@ services:
     networks:
       - hackathon-network
 
-#  frontend:
-#    depends_on:
-#      - backend
-#    image: frontend-image
-#    container_name: frontend-container
-#    build:
-#      context: ./frontend
-#      dockerfile: ./Dockerfile
-#    env_file:
-#      - ./frontend/.env
-#    expose:
-#      - 80
-#    ports:
-#      - "80:80"
+  frontend:
+    depends_on:
+      - backend
+    image: frontend-image
+    container_name: frontend-container
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    env_file:
+      - ./frontend/.env
+    expose:
+      - 80
+    ports:
+      - "80:80"
 
 networks:
   hackathon-network:
