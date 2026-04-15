@@ -13,6 +13,11 @@ export class MessageDto {
   @IsOptional()
   @IsString()
   workspace?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  template?: string;
 }
 
 @Exclude()
