@@ -63,8 +63,7 @@ export class TemplateService {
         id: template.id,
       };
     } catch (error: any) {
-      if (error instanceof NotFoundError)
-        throw new NotFoundException('Template not found');
+      if (error instanceof NotFoundError) throw new NotFoundException('Template not found');
       console.error(error);
       throw new ConflictException('Failed to update template');
     }
@@ -74,8 +73,7 @@ export class TemplateService {
       await this.em.nativeDelete(Template, { id, user: user.id });
       return {};
     } catch (error: any) {
-      if (error instanceof NotFoundError)
-        throw new NotFoundException('Template not found');
+      if (error instanceof NotFoundError) throw new NotFoundException('Template not found');
       throw new ConflictException('Failed to delete template');
     }
   }
@@ -106,15 +104,14 @@ export class TemplateService {
         isDefault: template.isDefault,
       };
     } catch (error: any) {
-      if (error instanceof NotFoundError)
-        throw new NotFoundException('Template not found');
+      if (error instanceof NotFoundError) throw new NotFoundException('Template not found');
       throw new ConflictException('Failed to get template');
     }
   }
 
   async seedForUser(userId: string): Promise<void> {
     const templates = DEFAULT_TEMPLATES.map((t) =>
-      this.em.create(Template, { ...t, user: userId, isDefault: false }),
+      this.em.create(Template, { ...t, user: userId }),
     );
     await this.em.persist(templates).flush();
   }

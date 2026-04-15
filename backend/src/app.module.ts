@@ -8,9 +8,18 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from '@/auth/guards/jwt.guard';
 import { WorkspaceModule } from '@/workspace/workspace.module';
 import { ChatModule } from '@/chat/chat.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 500,
+        },
+      ],
+    }),
     ConfigModule.forRoot({ isGlobal: true }),
     MikroOrmModule.forRoot(mikroOrmConfig),
     AuthModule,

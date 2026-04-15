@@ -15,7 +15,7 @@ import { MessageDto, MessageResponseDto } from '@/chat/dto/message.dto';
 import { RequestWithUser } from '@/auth/types';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
-import { ApiBody, ApiConsumes, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { HistoryResponseDto } from '@/chat/dto/history.dto';
 import { StreamResponseDto } from '@/chat/dto/stream.dto';
 import { FILE_SIZE_LIMIT } from '@/common/constants';
@@ -24,6 +24,7 @@ import { FILE_SIZE_LIMIT } from '@/common/constants';
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
+  @ApiOperation({ summary: 'Sends a message to the chat' })
   @Post('message')
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: MessageDto })
@@ -47,6 +48,7 @@ export class ChatController {
     return this.chatService.saveMessage(dto, file, req.user);
   }
 
+  @ApiOperation({ summary: 'Starts streaming chat tokens' })
   @Sse('stream/:workspaceId')
   streamResponse(
     @Param('workspaceId') workspaceId: string,
@@ -55,6 +57,7 @@ export class ChatController {
     return this.chatService.streamResponse(workspaceId, req.user);
   }
 
+  @ApiOperation({ summary: 'Retrieves chat history' })
   @Get('history/:workspaceId')
   async getHistory(
     @Param('workspaceId') workspaceId: string,

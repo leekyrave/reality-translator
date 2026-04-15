@@ -19,7 +19,7 @@ const LoginPage = () => {
       await login({ email: form.email, password: form.password });
       navigate("/workspace");
     } catch {
-      // error is already handled in context
+      // błąd obsługiwany w kontekście
     }
   };
 
@@ -28,13 +28,12 @@ const LoginPage = () => {
       <div className="login-root">
         <div className="login-main">
 
-          {/* ── Left panel ── */}
           <div className="login-left">
-            <h1 className="left-headline">Architecting<br />Intelligence.</h1>
+            <h1 className="left-headline">Architektura<br />Inteligencji.</h1>
             <p className="left-sub">
-              Enter a curated environment where structural clarity meets
-              advanced curation. Manage your architectural intelligence
-              with The Lucid Curator.
+              Wejdź do wyselekcjonowanego środowiska, gdzie klarowność struktury
+              spotyka się z zaawansowaną kuratorką. Zarządzaj swoją architektoniczną
+              inteligencją z AI-Kumplem.
             </p>
             <div className="left-cards">
               <div className="left-card" />
@@ -46,40 +45,35 @@ const LoginPage = () => {
             </div>
           </div>
 
-          {/* ── Right panel ── */}
           <div className="login-right">
 
-            {/* Brand */}
             <div className="brand-row">
               <span className="brand-logo">✦</span>
-              <span className="brand-name">The Lucid Curator</span>
+              <span className="brand-name">AI-Kumpel</span>
             </div>
 
-            <h2 className="form-title">Welcome back</h2>
-            <p className="form-subtitle">Please enter your credentials to access your workspace.</p>
+            <h2 className="form-title">Witaj ponownie</h2>
+            <p className="form-subtitle">Podaj swoje dane logowania, aby uzyskać dostęp do obszaru roboczego.</p>
 
             {error && <div className="error-box">{error}</div>}
 
-            {/* Email */}
             <div className="field-group">
               <div className="field-label-row">
-                <label className="field-label">Email Address</label>
+                <label className="field-label">Adres e-mail</label>
               </div>
               <input
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                placeholder="name@company.com"
+                placeholder="imie@firma.pl"
                 className="field-input"
               />
             </div>
 
-            {/* Password */}
             <div className="field-group">
               <div className="field-label-row">
-                <label className="field-label">Password</label>
-                <a href="#" className="forgot-link">Forgot Password?</a>
+                <label className="field-label">Hasło</label>
               </div>
               <input
                 type="password"
@@ -92,12 +86,12 @@ const LoginPage = () => {
             </div>
 
             <button onClick={handleSubmit} disabled={isLoading} className="btn-primary">
-              {isLoading ? "Logging in..." : "Log In"}
+              {isLoading ? "Logowanie..." : "Zaloguj się"}
             </button>
 
             <div className="signup-row">
-              Don't have an account?
-              <Link to="/register">Sign Up</Link>
+              Nie masz konta?
+              <Link to="/register">Zarejestruj się</Link>
             </div>
           </div>
         </div>

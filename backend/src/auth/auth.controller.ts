@@ -61,12 +61,13 @@ export class AuthController {
 
     return {};
   }
-
+  @ApiOperation({ summary: 'Logouts' })
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('token', this.cookieOptions);
   }
 
+  @ApiOperation({ summary: 'Get current user information' })
   @Get('me')
   me(@Req() req: RequestWithUser) {
     return { id: req.user.id, email: req.user.email };

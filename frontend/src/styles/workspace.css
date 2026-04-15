@@ -1,8 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* ══════════════════════════════════════════════════════
-   WORKSPACE PAGE — The Lucid Curator
-   ══════════════════════════════════════════════════════ */
 
 .ws-root {
   display: flex;
@@ -12,7 +9,6 @@
   overflow: hidden;
 }
 
-/* ── Sidebar ──────────────────────────────────────────── */
 .ws-sidebar {
   width: 220px;
   flex-shrink: 0;
@@ -169,7 +165,6 @@
 }
 .ws-upload-btn:hover { background: #263f68; }
 
-/* ── Main ─────────────────────────────────────────────── */
 .ws-main {
   flex: 1;
   display: flex;
@@ -245,7 +240,6 @@
   justify-content: center;
 }
 
-/* ── Content area ─────────────────────────────────────── */
 .ws-content {
   flex: 1;
   display: flex;
@@ -255,7 +249,6 @@
   min-height: 0;
 }
 
-/* ── Source Panel (left, compact) ─────────────────────── */
 .ws-source-panel {
   width: 240px;
   flex-shrink: 0;
@@ -417,7 +410,6 @@
   flex-shrink: 0;
 }
 
-/* ── Chat Panel (main) ────────────────────────────────── */
 .ws-chat-panel {
   flex: 1;
   background: #fff;
@@ -473,7 +465,6 @@
   line-height: 1.5;
 }
 
-/* Chat bubbles */
 .ws-bubble {
   max-width: 72%;
   padding: 12px 16px;
@@ -498,7 +489,6 @@
   border-radius: 4px 14px 14px 14px;
 }
 
-/* ── Input area ───────────────────────────────────────── */
 .ws-input-area {
   border-top: 1px solid #f3f4f6;
   padding: 12px 16px 14px;
@@ -587,7 +577,6 @@
 .ws-chip:hover:not(:disabled) { background: #f0f4fb; border-color: #93a8c8; color: #2d4a7a; }
 .ws-chip:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* ── Loading / spinner ────────────────────────────────── */
 .ws-loading-row {
   display: flex;
   align-items: center;

@@ -13,7 +13,6 @@ const RegisterPage = () => {
     password: "",
   });
 
-  const [agreed, setAgreed] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -25,29 +24,24 @@ const RegisterPage = () => {
   const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
 
-    if (!agreed) {
-      setValidationError("You must agree to the Terms of Service and Privacy Policy");
-      return;
-    }
-
     if (form.password.length < 8) {
-      setValidationError("Password must be at least 8 characters");
+      setValidationError("Hasło musi mieć co najmniej 8 znaków");
       return;
     }
     if (!/[a-z]/.test(form.password)) {
-      setValidationError("Password must contain at least one lowercase letter");
+      setValidationError("Hasło musi zawierać co najmniej jedną małą literę");
       return;
     }
     if (!/[A-Z]/.test(form.password)) {
-      setValidationError("Password must contain at least one uppercase letter");
+      setValidationError("Hasło musi zawierać co najmniej jedną wielką literę");
       return;
     }
     if (!/[0-9]/.test(form.password)) {
-      setValidationError("Password must contain at least one number");
+      setValidationError("Hasło musi zawierać co najmniej jedną cyfrę");
       return;
     }
     if (!/[^a-zA-Z0-9]/.test(form.password)) {
-      setValidationError("Password must contain at least one symbol");
+      setValidationError("Hasło musi zawierać co najmniej jeden znak specjalny");
       return;
     }
 
@@ -55,7 +49,7 @@ const RegisterPage = () => {
       await register({ name: form.name, email: form.email, password: form.password });
       navigate("/workspace");
     } catch {
-      // error is already handled in context
+      // błąd obsługiwany w kontekście
     }
   };
 
@@ -66,16 +60,15 @@ const RegisterPage = () => {
       <div className="reg-root">
         <div className="reg-main">
 
-          {/* ── Left panel ── */}
           <div className="reg-left">
-            <div className="left-brand">The Lucid Curator</div>
-            <h1 className="left-headline">Architectural<br />Intelligence.</h1>
+            <div className="left-brand">AI-Kumpel</div>
+            <h1 className="left-headline">Architektoniczna<br />Inteligencja.</h1>
 
             <div className="feature-card">
               <div className="feature-card-row">
                 <span className="brand-logo">✦</span>
                 <p className="feature-text">
-                  Turn complex jargon into <em>clear architectural insights</em>.
+                  Przekształć złożony żargon w <em>przejrzyste wnioski architektoniczne</em>.
                 </p>
               </div>
               <div className="feature-dots">
@@ -86,42 +79,38 @@ const RegisterPage = () => {
             </div>
           </div>
 
-          {/* ── Right panel ── */}
           <div className="reg-right">
-            <h2 className="form-title">Create your workspace</h2>
-            <p className="form-subtitle">Start your 14-day premium architectural curation trial.</p>
+            <h2 className="form-title">Utwórz obszar roboczy</h2>
+            <p className="form-subtitle">Rozpocznij 14-dniowy bezpłatny okres próbny.</p>
 
             {displayError && <div className="error-box">{displayError}</div>}
 
-            {/* Full Name */}
             <div className="field-group">
-              <label className="field-label">Full Name</label>
+              <label className="field-label">Imię i nazwisko</label>
               <input
                 type="text"
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                placeholder="E.g. Julian Wright"
+                placeholder="np. Jan Kowalski"
                 className="field-input"
               />
             </div>
 
-            {/* Work Email */}
             <div className="field-group">
-              <label className="field-label">Work Email</label>
+              <label className="field-label">E-mail służbowy</label>
               <input
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                placeholder="julian@firm.com"
+                placeholder="jan@firma.pl"
                 className="field-input"
               />
             </div>
 
-            {/* Password */}
             <div className="field-group">
-              <label className="field-label">Password</label>
+              <label className="field-label">Hasło</label>
               <div className="field-wrap">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -146,30 +135,16 @@ const RegisterPage = () => {
                   )}
                 </button>
               </div>
-              <p className="field-hint">Min 8 chars with uppercase, lowercase, number, and symbol.</p>
-            </div>
-
-            {/* Checkbox */}
-            <div className="checkbox-row">
-              <input
-                type="checkbox"
-                className="checkbox-input"
-                id="agree"
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-              />
-              <label className="checkbox-label" htmlFor="agree">
-                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-              </label>
+              <p className="field-hint">Min. 8 znaków: wielka litera, mała litera, cyfra i znak specjalny.</p>
             </div>
 
             <button onClick={handleSubmit} disabled={isLoading} className="btn-primary">
-              {isLoading ? "Creating account..." : "Create Account"}
+              {isLoading ? "Tworzenie konta..." : "Utwórz konto"}
             </button>
 
             <div className="login-row">
-              Already have an account?
-              <Link to="/login">Log In</Link>
+              Masz już konto?
+              <Link to="/login">Zaloguj się</Link>
             </div>
           </div>
         </div>

@@ -1,40 +1,48 @@
 export const FILE_SIZE_LIMIT = 10 * 1024 * 1024;
 
-export const DEFAULT_TEMPLATES: Array<{ title: string; role: string; content: string }> = [
+export const DEFAULT_TEMPLATES: Array<{
+  title: string;
+  role: string;
+  content: string;
+  isDefault: boolean;
+}> = [
   {
-    title: 'Executive Summary',
-    role: 'Summarizer',
+    title: 'Streszczenie zarządcze',
+    role: 'Podsumowujący',
     content:
-      'Transform the provided document into a concise executive summary. ' +
-      'Structure the output as follows:\n' +
-      '1. One-sentence overview (what this document is about).\n' +
-      '2. Key points (3-5 bullet points covering the most important facts, decisions, or findings).\n' +
-      '3. Action items or conclusions (if any).\n' +
-      'Use plain business language. Avoid jargon. Be brief — the summary should be readable in under 2 minutes.',
+      'Przekształć dostarczony dokument w zwięzłe streszczenie zarządcze. ' +
+      'Struktura odpowiedzi:\n' +
+      '1. Jednozdaniowe podsumowanie (czego dotyczy dokument).\n' +
+      '2. Kluczowe punkty (3-5 punktów obejmujących najważniejsze fakty, decyzje lub wnioski).\n' +
+      '3. Działania do podjęcia lub wnioski końcowe (jeśli istnieją).\n' +
+      'Używaj prostego języka biznesowego. Unikaj żargonu. Bądź zwięzły — streszczenie powinno być czytelne w mniej niż 2 minuty.',
+    isDefault: false,
   },
   {
-    title: 'Legal to Layman',
-    role: 'Legal Translator',
+    title: 'Prawo po ludzku',
+    role: 'Tłumacz prawny',
     content:
-      'Translate the provided legal text into plain, everyday language that anyone can understand. ' +
-      'Follow these rules:\n' +
-      '- Replace all legal terms and Latin phrases with simple equivalents.\n' +
-      '- Break long sentences into short, clear ones.\n' +
-      '- Explain what each clause or section actually means for the reader in practice.\n' +
-      '- Highlight any obligations, rights, deadlines, or risks the reader should be aware of.\n' +
-      '- Do not omit important details — simplify language, not meaning.',
+      'Przetłumacz dostarczony tekst prawny na prosty, codzienny język zrozumiały dla każdego. ' +
+      'Zasady:\n' +
+      '- Zastąp wszystkie terminy prawnicze i zwroty łacińskie prostymi odpowiednikami.\n' +
+      '- Rozbij długie zdania na krótkie i jasne.\n' +
+      '- Wyjaśnij, co każdy punkt lub sekcja oznacza w praktyce dla czytelnika.\n' +
+      '- Podkreśl wszelkie obowiązki, prawa, terminy lub ryzyka, o których czytelnik powinien wiedzieć.\n' +
+      '- Nie pomijaj ważnych szczegółów — upraszczaj język, nie znaczenie.',
+    isDefault: false,
   },
   {
-    title: 'Tech for Non-Tech',
-    role: 'Tech Explainer',
+    title: 'Technologia dla laika',
+    role: 'Tłumacz techniczny',
     content:
-      'Explain the provided technical content to someone with no technical background. ' +
-      'Guidelines:\n' +
-      '- Use everyday analogies to explain technical concepts.\n' +
-      '- Avoid acronyms; if you must use one, define it immediately.\n' +
-      '- Focus on what the technology does and why it matters, not how it works internally.\n' +
-      '- Structure the explanation as: what it is → why it matters → what the reader should know or do.\n' +
-      '- Keep the tone friendly and approachable.',
+      'Wyjaśnij dostarczone treści techniczne osobie bez wiedzy technicznej. ' +
+      'Wytyczne:\n' +
+      '- Używaj codziennych analogii do wyjaśniania pojęć technicznych.\n' +
+      '- Unikaj skrótów; jeśli musisz użyć skrótu, natychmiast go zdefiniuj.\n' +
+      '- Skup się na tym, co technologia robi i dlaczego jest ważna, a nie na tym, jak działa wewnętrznie.\n' +
+      '- Struktura wyjaśnienia: czym to jest → dlaczego jest ważne → co czytelnik powinien wiedzieć lub zrobić.\n' +
+      '- Zachowaj przyjazny i przystępny ton.',
+    isDefault: true,
   },
 ];
 export const MAX_FILE_COUNT = 5;

@@ -9,7 +9,6 @@ import AppSidebar from "../components/AppSidebar";
 import {useAuth} from "../context/AuthContext.tsx";
 import {useNavigate} from "react-router-dom";
 
-/* ─── SSE stream reader ───────────────────────────────── */
 async function* readSSEStream(response: Response): AsyncGenerator<string> {
     if (!response.ok || !response.body) throw new Error(`Stream error: ${response.status}`);
 
@@ -44,7 +43,6 @@ async function* readSSEStream(response: Response): AsyncGenerator<string> {
     }
 }
 
-/* ─── component ──────────────────────────────────────── */
 export default function WorkspacePage() {
     const {logout} = useAuth();
     const [searchParams] = useSearchParams();
@@ -62,12 +60,20 @@ export default function WorkspacePage() {
     const [isStreaming, setIsStreaming] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [defaultTemplate, setDefaultTemplate] = useState<string>("NO TEMPLATE");
+    const [defaultTemplate, setDefaultTemplate] = useState<string>("BRAK SZABLONU");
 
     const [chatInput, setChatInput] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    /* ── load history when opening existing workspace ─────── */
+    // Sync workspaceId state with URL param on navigation
+    useEffect(() => {
+        setWorkspaceId(initialWsId);
+        setMessages([]);
+        setStreamingContent("");
+        setError(null);
+        setFile(null);
+    }, [initialWsId]);
+
     useEffect(() => {
         if (!initialWsId) return;
         chatApi
@@ -77,7 +83,6 @@ export default function WorkspacePage() {
             });
     }, [initialWsId]);
 
-    /* ── fetch default template badge ─────── */
     useEffect(() => {
         const fetchDefaultTemplate = async () => {
             try {
@@ -89,7 +94,7 @@ export default function WorkspacePage() {
                     if (data.data.title) setDefaultTemplate(data.data.title.toUpperCase());
                 }
             } catch (err) {
-                console.error("Failed to fetch default template:", err);
+                console.error("Nie udało się pobrać domyślnego szablonu:", err);
             }
         };
         fetchDefaultTemplate();
@@ -99,7 +104,6 @@ export default function WorkspacePage() {
         messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
     }, [messages, streamingContent]);
 
-    /* ── stream helper ──────────────────────────────────────── */
     const streamFromWorkspace = useCallback(async (wsId: string) => {
         setIsStreaming(true);
         setStreamingContent("");
@@ -118,14 +122,13 @@ export default function WorkspacePage() {
                 setMessages((prev) => [...prev, {role: "assistant", content: accumulated}]);
             }
         } catch (e) {
-            setError((e as Error).message ?? "Streaming failed");
+            setError((e as Error).message ?? "Błąd strumieniowania");
         } finally {
             setStreamingContent("");
             setIsStreaming(false);
         }
     }, []);
 
-    /* ── send message ──────────────────────────────────────── */
     const sendMessage = useCallback(
         async (message: string, fileToSend?: File) => {
             const formData = new FormData();
@@ -146,7 +149,6 @@ export default function WorkspacePage() {
         [workspaceId, streamFromWorkspace],
     );
 
-    /* ── file helpers ───────────────────────────────────────── */
     const handleFileSelect = (f: File) => {
         setFile(f);
         setError(null);
@@ -168,22 +170,20 @@ export default function WorkspacePage() {
     };
     const onDragLeave = () => setIsDragging(false);
 
-    /* ── upload & analyse ───────────────────────────────────── */
     const handleUpload = async () => {
         if (!file) return;
         setIsUploading(true);
         setError(null);
         try {
-            await sendMessage("Please analyse and simplify this document.", file);
+            await sendMessage("Proszę przeanalizuj i uprość ten dokument.", file);
             setFile(null);
         } catch (e) {
-            setError((e as Error).message ?? "Upload failed");
+            setError((e as Error).message ?? "Przesyłanie nie powiodło się");
         } finally {
             setIsUploading(false);
         }
     };
 
-    /* ── chat submit ────────────────────────────────────────── */
     const handleChatSubmit = async () => {
         const msg = chatInput.trim();
         if (!msg || isStreaming) return;
@@ -192,17 +192,15 @@ export default function WorkspacePage() {
         try {
             await sendMessage(msg);
         } catch (e) {
-            setError((e as Error).message ?? "Failed to send message");
+            setError((e as Error).message ?? "Nie udało się wysłać wiadomości");
         }
     };
 
-    /* ── quick action chips ─────────────────────────────────── */
     const handleChip = (text: string) => {
         if (isStreaming) return;
         setChatInput(text);
     };
 
-    /* ── reset ──────────────────────────────────────────────── */
     const handleNewDoc = () => {
         setFile(null);
         setMessages([]);
@@ -220,7 +218,6 @@ export default function WorkspacePage() {
     return (
         <div className="ws-root">
 
-            {/* ══ Sidebar ══ */}
             <AppSidebar
                 activePage="workspace"
                 workspaceKey={sidebarKey}
@@ -232,16 +229,16 @@ export default function WorkspacePage() {
 
                 {/* topbar */}
                 <header className="ws-topbar">
-                    <div className="ws-topbar-brand">Lucid Curator</div>
+                    <div className="ws-topbar-brand">AI-Kumpel</div>
                     <nav className="ws-topbar-nav">
-                        <Link to="/workspace" className="ws-topbar-link active">Workspace</Link>
+                        <Link to="/workspace" className="ws-topbar-link active">Obszar roboczy</Link>
                     </nav>
                     <div className="ws-topbar-right">
                         <button className="ws-new-doc-btn" onClick={handleNewDoc}>
-                            New Chat
+                            Nowy czat
                         </button>
                         <button className="ws-new-doc-btn" onClick={handleLogout}>
-                            Logout
+                            Wyloguj
                         </button>
                     </div>
                 </header>
@@ -252,7 +249,7 @@ export default function WorkspacePage() {
                     <section className="ws-source-panel">
                         <div className="ws-source-header">
                             <CiFileOn style={{width: "13px", height: "13px"}}/>
-                            <span className="ws-source-label">SOURCE</span>
+                            <span className="ws-source-label">ŹRÓDŁO</span>
                         </div>
 
                         <div
@@ -275,8 +272,8 @@ export default function WorkspacePage() {
                                     <div className="ws-drop-icon">
                                         <MdOutlineUploadFile style={{width: "32px", height: "32px"}}/>
                                     </div>
-                                    <p className="ws-drop-title">Drop file here</p>
-                                    <p className="ws-drop-sub">or <span className="ws-drop-link">browse</span></p>
+                                    <p className="ws-drop-title">Upuść plik tutaj</p>
+                                    <p className="ws-drop-sub">lub <span className="ws-drop-link">przeglądaj</span></p>
                                     <p className="ws-drop-types">PDF · DOCX · TXT · MD · CSV</p>
                                 </div>
                             ) : (
@@ -308,8 +305,8 @@ export default function WorkspacePage() {
                                 disabled={isUploading || isStreaming}
                             >
                                 {isUploading
-                                    ? <><span className="ws-spinner"/> Analysing…</>
-                                    : "✦ Analyse & Simplify"}
+                                    ? <><span className="ws-spinner"/> Analizowanie…</>
+                                    : "✦ Analizuj i uprość"}
                             </button>
                         )}
 
@@ -324,9 +321,8 @@ export default function WorkspacePage() {
                             {!hasContent && (
                                 <div className="ws-empty-chat">
                                     <div className="ws-empty-icon">✦</div>
-                                    <p className="ws-empty-title">Start a conversation</p>
-                                    <p className="ws-empty-sub">Upload a document to analyse, or ask a question
-                                        below.</p>
+                                    <p className="ws-empty-title">Rozpocznij rozmowę</p>
+                                    <p className="ws-empty-sub">Prześlij dokument do analizy lub zadaj pytanie poniżej.</p>
                                 </div>
                             )}
 
@@ -342,7 +338,7 @@ export default function WorkspacePage() {
                                 <div className="ws-bubble ws-bubble-assistant">
                                     {!streamingContent ? (
                                         <div className="ws-loading-row">
-                                            <span className="ws-spinner blue"/> Generating response…
+                                            <span className="ws-spinner blue"/> Generowanie odpowiedzi…
                                         </div>
                                     ) : (
                                         <p style={{whiteSpace: "pre-wrap", margin: 0}}>
@@ -362,7 +358,7 @@ export default function WorkspacePage() {
                                 <input
                                     type="text"
                                     className="ws-chat-input"
-                                    placeholder="Ask a question about the document…"
+                                    placeholder="Zadaj pytanie dotyczące dokumentu…"
                                     value={chatInput}
                                     onChange={(e) => setChatInput(e.target.value)}
                                     onKeyDown={(e) => e.key === "Enter" && void handleChatSubmit()}
@@ -373,11 +369,11 @@ export default function WorkspacePage() {
                                     onClick={() => void handleChatSubmit()}
                                     disabled={isStreaming || !chatInput.trim()}
                                 >
-                                    {isStreaming ? <span className="ws-spinner"/> : "Send ➤"}
+                                    {isStreaming ? <span className="ws-spinner"/> : "Wyślij ➤"}
                                 </button>
                             </div>
                             <div className="ws-chat-chips">
-                                {["Explain Section 4", "Summarize key points", "Simplify further", "Explain the jargon"].map((c) => (
+                                {["Wyjaśnij sekcję 4", "Podsumuj kluczowe punkty", "Uprość dalej", "Wyjaśnij żargon"].map((c) => (
                                     <button
                                         key={c}
                                         className="ws-chip"

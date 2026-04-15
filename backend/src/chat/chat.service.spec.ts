@@ -38,7 +38,7 @@ const mockConfigService = {
     const map: Record<string, string> = {
       BASE_OPEN_AI_URL: 'http://localhost:11434/v1',
       OPEN_AI_API_KEY: 'test-key',
-      OPEN_AI_MODEL: 'gemma4:large',
+      OPEN_AI_MODEL: 'gemma4:small',
     };
     return map[key] ?? null;
   }),
@@ -287,7 +287,7 @@ describe('ChatService', () => {
             { role: 'assistant', content: 'Hi there' },
           ]);
           expect(callArgs.stream).toBe(true);
-          expect(callArgs.model).toBe('gemma4:large');
+          expect(callArgs.model).toBe('gemma4:small');
           done();
         },
         error: done,
