@@ -28,6 +28,7 @@ export class TemplateService {
       if (!isVerifiedData.verified) throw new ConflictException('Template is not verified');
       const template = this.em.create(Template, {
         ...dto,
+        isDefault: false,
         user: user.id,
       });
       await this.em.persist(template).flush();
