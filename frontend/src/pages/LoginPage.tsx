@@ -51,12 +51,7 @@ const LoginPage = () => {
 
             {/* Brand */}
             <div className="brand-row">
-              <svg className="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="5" r="2" />
-                <line x1="12" y1="7" x2="8" y2="19" />
-                <line x1="12" y1="7" x2="16" y2="19" />
-                <line x1="7" y1="14" x2="17" y2="14" />
-              </svg>
+              <span className="brand-logo">✦</span>
               <span className="brand-name">The Lucid Curator</span>
             </div>
 
@@ -106,17 +101,6 @@ const LoginPage = () => {
             </div>
           </div>
         </div>
-
-        {/* Footer */}
-        <footer className="login-footer">
-          <span className="footer-copy">© 2024 The Lucid Curator. Architectural Intelligence.</span>
-          <div className="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Security</a>
-            <a href="#">Contact</a>
-          </div>
-        </footer>
       </div>
     </>
   );

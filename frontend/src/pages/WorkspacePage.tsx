@@ -7,6 +7,7 @@ import {MdOutlineUploadFile} from "react-icons/md";
 import {CiFileOn} from "react-icons/ci";
 import AppSidebar from "../components/AppSidebar";
 import {useAuth} from "../context/AuthContext.tsx";
+import { useNavigate } from "react-router-dom";
 
 /* ─── SSE stream reader ───────────────────────────────── */
 async function* readSSEStream(response: Response): AsyncGenerator<string> {
@@ -48,6 +49,7 @@ export default function WorkspacePage() {
     const {logout} = useAuth();
     const [searchParams] = useSearchParams();
     const initialWsId = searchParams.get("id");
+    const navigate = useNavigate();
 
     const [file, setFile] = useState<File | null>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -60,6 +62,7 @@ export default function WorkspacePage() {
     const [isStreaming, setIsStreaming] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [defaultTemplate, setDefaultTemplate] = useState<string>("NO TEMPLATE");
 
     const [chatInput, setChatInput] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -73,6 +76,24 @@ export default function WorkspacePage() {
             .catch(() => {
             });
     }, [initialWsId]);
+
+    /* ── fetch default template badge ─────── */
+    useEffect(() => {
+        const fetchDefaultTemplate = async () => {
+            try {
+                const res = await fetch("http://localhost:5000/api/template/default", {
+                    credentials: "include",
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.title) setDefaultTemplate(data.title.toUpperCase());
+                }
+            } catch (err) {
+                console.error("Failed to fetch default template:", err);
+            }
+        };
+        fetchDefaultTemplate();
+    }, []);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
@@ -336,7 +357,7 @@ export default function WorkspacePage() {
 
                         {/* input area */}
                         <div className="ws-input-area">
-                            <div className="ws-chat-badge">AI ARCHITECT ACTIVE</div>
+                            <div className="ws-chat-badge">{defaultTemplate}</div>
                             <div className="ws-chat-input-row">
                                 <input
                                     type="text"
