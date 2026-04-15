@@ -12,7 +12,7 @@ body { font-family: 'DM Sans', sans-serif; }
 .brand-sub { font-size: 9px; font-weight: 600; color: #9ca3af; letter-spacing: 0.08em; text-transform: uppercase; }
 .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 13px; font-weight: 500; color: #6b7280; cursor: pointer; text-decoration: none; border-radius: 0; transition: background 0.12s, color 0.12s; }
 .nav-item:hover { background: #e8ecf5; color: #111827; }
-.nav-item.active { background: #e2e8f5; color: #2d4a7a; font-weight: 600; border-right: 3px solid #2d4a7a; }
+.nav-item.active { background: #e2e8f5; color: #2d4a7a; font-weight: 600; border-left: 3px solid #2d4a7a; }
 .sidebar-bottom { margin-top: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 6px; }
 .upload-btn { width: 100%; padding: 10px; background: #2d4a7a; color: white; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; border: none; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
 .upload-btn:hover { background: #263f68; }
@@ -29,7 +29,7 @@ body { font-family: 'DM Sans', sans-serif; }
 .add-btn { display: flex; align-items: center; gap: 7px; padding: 9px 18px; background: #2d4a7a; color: white; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; border: none; border-radius: 8px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
 .add-btn:hover { background: #263f68; }
 
-.content { flex: 1; padding: 28px 32px; overflow-y: auto; }
+.content { flex: 1; padding-left: 32px; padding-right: 32px; padding-top: 30px; overflow-y: auto; }
 
 /* Info banner */
 .info-banner { background: #e8eef8; border: 1px solid #c5d4ee; border-radius: 12px; padding: 18px 22px; display: flex; gap: 16px; align-items: flex-start; margin-bottom: 24px; }
@@ -59,7 +59,7 @@ body { font-family: 'DM Sans', sans-serif; }
 .jargon-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 20px; }
 
 /* Bottom row */
-.bottom-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+.bottom-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;}
 
 .create-card { background: white; border: 2px dashed #c5d4ee; border-radius: 14px; padding: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: border-color 0.15s, background 0.15s; min-height: 160px; }
 .create-card:hover { border-color: #2d4a7a; background: #f5f7fd; }

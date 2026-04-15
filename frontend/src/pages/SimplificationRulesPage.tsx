@@ -8,6 +8,8 @@ import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
 import '../styles/cardsPage.css';
 
+const BASE_URL = "http://localhost:5000/api";
+
 // ── Types ──────────────────────────────────────────────────────────────
 type JargonHandling = "REMOVE ENTIRELY" | "TRANSLATE & DEFINE" | "USE ANALOGIES" | "SIMPLIFY" | "KEEP AS-IS";
 
@@ -242,13 +244,57 @@ const SimplificationRulesPage = () => {
   const openEdit = (r: Rule) => setModal({ rule: r, id: r.id });
   const closeModal = () => setModal(null);
 
-  const handleSave = (form: Omit<Rule, "id">) => {
-    if (modal?.id !== undefined) {
-      setRules((rs) => rs.map((r) => (r.id === modal.id ? { ...form, id: r.id } : r)));
-    } else {
-      setRules((rs) => [...rs, { ...form, id: Date.now() }]);
+  const sendTemplateToBackend = async (id: number, template: Omit<Rule, "id">) => {
+    try {
+      const payload = {
+        id,
+        title: template.title,
+        content: template.description,
+        role: template.persona,
+      };
+
+      const res = await fetch(`${BASE_URL}/template`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message ?? `Error ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("Template sent successfully:", data);
+      return data;
+    } catch (e: unknown) {
+      console.error("Failed to send template:", (e as Error).message);
+      throw e;
     }
-    closeModal();
+  };
+
+  const handleSave = async (form: Omit<Rule, "id">) => {
+    try {
+      let newId: number;
+      
+      if (modal?.id !== undefined) {
+        // Edit existing
+        setRules((rs) => rs.map((r) => (r.id === modal.id ? { ...form, id: r.id } : r)));
+        newId = modal.id;
+      } else {
+        // Create new
+        newId = Date.now();
+        setRules((rs) => [...rs, { ...form, id: newId }]);
+      }
+      
+      // Send to backend
+      await sendTemplateToBackend(newId, form);
+      closeModal();
+    } catch (e: unknown) {
+      console.error("Save failed:", e);
+      alert("Failed to save template");
+    }
   };
 
   const handleDelete = (id: number) => {
@@ -258,10 +304,7 @@ const SimplificationRulesPage = () => {
 
   const navItems = [
     { label: "Recent Chats", icon: "💬", to: "/workspace" },
-    { label: "Document Vault", icon: "🗂", to: "/" },
     { label: "Simplification Rules", icon: "✏️", to: "/cards", active: true },
-    { label: "Team Assets", icon: "👥", to: "/" },
-    { label: "Archive", icon: "🕐", to: "/" },
   ];
 
   return (
@@ -286,8 +329,10 @@ const SimplificationRulesPage = () => {
           ))}
 
           <div className="sidebar-bottom">
-            <Link to="/" className="nav-item" style={{ padding: "8px 0" }}>❓ Help Center</Link>
-            <Link to="/" className="nav-item" style={{ padding: "8px 0" }}>👤 Account</Link>
+            <div className="stat-item">
+              <div className="stat-label">Active Rules</div>
+              <div className="stat-val">{rules.length}</div>
+            </div>
           </div>
         </aside>
 
@@ -368,47 +413,8 @@ const SimplificationRulesPage = () => {
                 <div className="create-sub">Define a new curation pattern</div>
               </div>
 
-              <div className="perf-card">
-                <div className="perf-top">
-                  <span className="perf-title">System Performance</span>
-                  <span style={{ color: "#2d4a7a", fontSize: 18 }}>⚡</span>
-                </div>
-                <div className="perf-bar-bg"><div className="perf-bar" /></div>
-                <div className="perf-text">85% of documents processed using 'Executive Summary' this month.</div>
-                <div className="perf-avatars">
-                  {["A", "B", "C"].map((l, i) => (
-                    <div key={i} className="avatar" style={{ background: ["#2d4a7a","#4f6fba","#7c5cbf"][i] }}>{l}</div>
-                  ))}
-                  <div className="avatar avatar-more">+12</div>
-                </div>
-              </div>
-
-              <div className="feature-card">
-                <div className="feature-label">New Feature</div>
-                <div className="feature-title">Multi-Persona Chaining</div>
-                <div className="feature-desc">Apply multiple rules sequentially for complex document restructuring.</div>
-              </div>
             </div>
 
-            {/* Stats */}
-            <div className="stats-row">
-              <div className="stat-item">
-                <div className="stat-label">Active Rules</div>
-                <div className="stat-val">{rules.length}</div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-label">Global Usage</div>
-                <div className="stat-val">98.2<span className="stat-suffix">%</span></div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-label">Avg. Complexity Drop</div>
-                <div className="stat-val blue">4.2<span className="stat-suffix" style={{ fontSize: 14 }}>pts</span></div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-label">Jargon Redacted</div>
-                <div className="stat-val">1.2<span className="stat-suffix">M</span></div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
