@@ -4,17 +4,19 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import WorkspacePage from "./pages/WorkspacePage";
+import SimplificationRulesPage from "./pages/SimplificationRulesPage.tsx";
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Public routes */}
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/cards" element={<SimplificationRulesPage />} />
 
-          {/* Protected route — only for authenticated users */}
+
           <Route
             path="/dashboard"
             element={
@@ -24,8 +26,16 @@ function App() {
             }
           />
 
-          {/* Redirect from / to /register */}
-          <Route path="/" element={<Navigate to="/register" replace />} />
+          <Route
+            path="/workspace"
+            element={
+              <ProtectedRoute>
+                <WorkspacePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

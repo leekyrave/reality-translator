@@ -14,8 +14,16 @@ export class MessageDto {
   @IsString()
   workspace?: string;
 
-  @ApiProperty({ type: 'string', format: 'binary' })
-  file: Express.Multer.File;
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  template?: string;
+}
+
+@Exclude()
+export class MessageResponseDto {
+  @Expose()
+  workspaceId: string;
 }
 
 @Exclude()

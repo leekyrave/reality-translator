@@ -46,7 +46,16 @@ export class TemplateService {
     try {
       const template = await this.em.findOneOrFail(Template, { id, user: user.id });
 
+      if (dto.isDefault === true) {
+        await this.em.nativeUpdate(
+          Template,
+          { user: user.id, isDefault: true },
+          { isDefault: false },
+        );
+      }
+
       Object.assign(template, dto);
+      await this.em.flush();
       return {
         id: template.id,
       };
@@ -75,6 +84,7 @@ export class TemplateService {
         title: template.title,
         content: template.content,
         role: template.role,
+        isDefault: template.isDefault,
       }));
     } catch (error: any) {
       throw new ConflictException('Failed to get templates');
@@ -89,6 +99,7 @@ export class TemplateService {
         title: template.title,
         content: template.content,
         role: template.role,
+        isDefault: template.isDefault,
       };
     } catch (error: any) {
       if (error instanceof NotFoundException)

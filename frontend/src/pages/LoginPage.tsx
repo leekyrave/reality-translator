@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import '../styles/auth.css';
 
 const LoginPage = () => {
   const { login, isLoading, error } = useAuth();
@@ -12,7 +13,7 @@ const LoginPage = () => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
     try {
       await login({ email: form.email, password: form.password });
@@ -23,95 +24,101 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
+    <>
+      <div className="login-root">
+        <div className="login-main">
 
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome
-          </h1>
-          <p className="text-gray-500 text-sm">
-            Don’t have an account?{" "}
-            <Link
-              to="/register"
-              className="text-blue-600 hover:text-blue-700 font-medium"
-            >
-              Sign up
-            </Link>
-          </p>
-        </div>
-
-        {/* Form */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-
-          {/* Error */}
-          {error && (
-            <div className="mb-5 px-4 py-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600">
-              {error}
+          {/* ── Left panel ── */}
+          <div className="login-left">
+            <h1 className="left-headline">Architecting<br />Intelligence.</h1>
+            <p className="left-sub">
+              Enter a curated environment where structural clarity meets
+              advanced curation. Manage your architectural intelligence
+              with The Lucid Curator.
+            </p>
+            <div className="left-cards">
+              <div className="left-card" />
+              <div className="left-card wide" />
+              <div className="left-card row2-wide">
+                <div className="inner" />
+                <div className="inner" />
+              </div>
             </div>
-          )}
+          </div>
 
-          <div className="space-y-5">
+          {/* ── Right panel ── */}
+          <div className="login-right">
+
+            {/* Brand */}
+            <div className="brand-row">
+              <svg className="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="5" r="2" />
+                <line x1="12" y1="7" x2="8" y2="19" />
+                <line x1="12" y1="7" x2="16" y2="19" />
+                <line x1="7" y1="14" x2="17" y2="14" />
+              </svg>
+              <span className="brand-name">The Lucid Curator</span>
+            </div>
+
+            <h2 className="form-title">Welcome back</h2>
+            <p className="form-subtitle">Please enter your credentials to access your workspace.</p>
+
+            {error && <div className="error-box">{error}</div>}
+
             {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Email
-              </label>
+            <div className="field-group">
+              <div className="field-label-row">
+                <label className="field-label">Email Address</label>
+              </div>
               <input
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                placeholder="ivan@example.com"
-                required
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                placeholder="name@company.com"
+                className="field-input"
               />
             </div>
 
             {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Password
-              </label>
+            <div className="field-group">
+              <div className="field-label-row">
+                <label className="field-label">Password</label>
+                <a href="#" className="forgot-link">Forgot Password?</a>
+              </div>
               <input
                 type="password"
                 name="password"
                 value={form.password}
                 onChange={handleChange}
-                placeholder="Your password"
-                required
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder-gray-400 text-sm
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                placeholder="••••••••"
+                className="field-input"
               />
             </div>
 
-            {/* Button */}
-            <button
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400
-                         text-white font-medium rounded-xl text-sm transition cursor-pointer
-                         disabled:cursor-not-allowed mt-2"
-            >
-              {isLoading ? "Logging in..." : "Log in"}
+            <button onClick={handleSubmit} disabled={isLoading} className="btn-primary">
+              {isLoading ? "Logging in..." : "Log In"}
             </button>
 
-            <button
-              onClick={() => {
-                localStorage.setItem("jwt_token", "fake-token");
-                navigate("/dashboard");
-              }}
-              className="w-full py-3 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700
-                        font-medium rounded-xl text-sm transition cursor-pointer"
-            >
-              Log in as test user
-            </button>
+            <div className="signup-row">
+              Don't have an account?
+              <Link to="/register">Sign Up</Link>
+            </div>
           </div>
         </div>
+
+        {/* Footer */}
+        <footer className="login-footer">
+          <span className="footer-copy">© 2024 The Lucid Curator. Architectural Intelligence.</span>
+          <div className="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Security</a>
+            <a href="#">Contact</a>
+          </div>
+        </footer>
       </div>
-    </div>
+    </>
   );
 };
 

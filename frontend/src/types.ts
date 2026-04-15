@@ -1,12 +1,7 @@
-export interface User {       // must be first
+export interface User {
   id: string;
   email: string;
   name?: string;
-}
-
-export interface AuthResponse {
-  access_token: string;
-  user?: User;               // using User
 }
 
 export interface RegisterBody {
@@ -20,12 +15,22 @@ export interface LoginBody {
   password: string;
 }
 
-export type genericType<T> = {
-  data: T;
+export interface ChatMessage {
+  id?: string;
+  role: "user" | "assistant";
+  content: string;
+  createdAt?: string;
 }
 
-// const test: genericType<LoginBody> = {
-//   data: {
-//     email: "example@example.com",
-//     password: "password123"
-//   }}
+export interface Workspace {
+  id: string;
+  title: string;
+  messagesCount: number;
+}
+
+export interface Template {
+  id: string;
+  title: string;
+  role: string;
+  content: string;
+}

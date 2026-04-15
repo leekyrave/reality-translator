@@ -1,18 +1,12 @@
-import {apiClient} from "./client";
-import type {RegisterBody, LoginBody} from "../types";
+import { apiClient } from "./client";
+import type { RegisterBody, LoginBody } from "../types";
 
 export const authApi = {
-    register: async (data: RegisterBody) => {
-        const res = await apiClient.post("auth/register", data);
-        return res;
-    },
-    login: async (data: LoginBody) => {
-        const res = await apiClient.post("auth/login", data);
-        return res;
-    },
+  register: (data: RegisterBody) => apiClient.post("/auth/register", data),
 
-    logout: async () => {
-        await apiClient.post("auth/logout", {}); //back request to del cookie
-    }
+  login: (data: LoginBody) => apiClient.post("/auth/login", data),
 
+  logout: () => apiClient.post("/auth/logout", {}),
+
+  me: () => apiClient.get<{ id: string; email: string }>("/auth/me"),
 };

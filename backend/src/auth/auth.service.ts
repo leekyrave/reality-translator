@@ -10,8 +10,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { EntityManager, UniqueConstraintViolationException } from '@mikro-orm/core';
 import { User } from '@/libs/orm/entities';
-import { JwtPayload, TokenType } from '@/auth/types';
+import { AuthPayload, JwtPayload, TokenType } from '@/auth/types';
 import { LoginDto, RegisterDto } from '@/auth/dto';
+import { MeResponseDto } from '@/auth/dto/me.dto';
 
 @Injectable()
 export class AuthService {
@@ -52,6 +53,10 @@ export class AuthService {
     if (!verified) throw new UnauthorizedException('Invalid credentials');
 
     return this.signJwt({ sub: user.id, email: user.email });
+  }
+
+  async me(user: AuthPayload): Promise<MeResponseDto> {
+    return await this.em.findOneOrFail(User, { id: user.id });
   }
 
   signJwt(payload: JwtPayload): TokenType {
