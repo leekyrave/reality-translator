@@ -38,7 +38,6 @@ export default function AppSidebar({ activePage, workspaceKey, onUploadClick }: 
         <div className="brand-logo">✦</div>
         <div>
           <div className="ws-brand-name">The Lucid Curator</div>
-          <div className="ws-brand-mode">AI ARCHITECT MODE</div>
         </div>
       </div>
 

@@ -73,12 +73,7 @@ const RegisterPage = () => {
 
             <div className="feature-card">
               <div className="feature-card-row">
-                <svg className="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="5" r="2" />
-                  <line x1="12" y1="7" x2="8" y2="19" />
-                  <line x1="12" y1="7" x2="16" y2="19" />
-                  <line x1="7" y1="14" x2="17" y2="14" />
-                </svg>
+                <span className="brand-logo">✦</span>
                 <p className="feature-text">
                   Turn complex jargon into <em>clear architectural insights</em>.
                 </p>
@@ -88,13 +83,6 @@ const RegisterPage = () => {
                 <div className="dot dot-sm" />
                 <div className="dot dot-active dot-sm" />
               </div>
-            </div>
-
-            <div className="social-proof-label">Used by leading global firms</div>
-            <div className="firm-logos">
-              <span className="firm-logo">Stratos</span>
-              <span className="firm-logo">Blueprint</span>
-              <span className="firm-logo">Nova</span>
             </div>
           </div>
 
@@ -185,17 +173,6 @@ const RegisterPage = () => {
             </div>
           </div>
         </div>
-
-        {/* Footer */}
-        <footer className="reg-footer">
-          <span className="footer-copy">© 2024 The Lucid Curator. Architectural Intelligence.</span>
-          <div className="footer-links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Security</a>
-            <a href="#">Contact</a>
-          </div>
-        </footer>
       </div>
     </>
   );
