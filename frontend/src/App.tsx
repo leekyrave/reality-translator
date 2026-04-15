@@ -14,9 +14,13 @@ function App() {
         <Routes>
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/cards" element={<SimplificationRulesPage />} />
 
 
+          {/*/!* Routes for testing *!/*/}
+          {/*<Route path="/dashboard" element={<DashboardPage />} />*/}
+          {/*<Route path="/workspace" element={<WorkspacePage />} />*/}
+          {/*<Route path="/cards" element={<SimplificationRulesPage />} />*/}
+          {/*/!* Protected routes *!/*/}
           <Route
             path="/dashboard"
             element={
@@ -31,6 +35,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <WorkspacePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/cards"
+            element={
+              <ProtectedRoute>
+                <SimplificationRulesPage />
               </ProtectedRoute>
             }
           />

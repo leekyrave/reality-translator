@@ -3,14 +3,13 @@ import { Link, useSearchParams } from "react-router-dom";
 import "../styles/workspace.css";
 import { chatApi } from "../api/chat";
 import type { ChatMessage } from "../types";
+import { CiFileOn } from "react-icons/ci";
+import { MdOutlineUploadFile } from "react-icons/md";
 
 /* ─── sidebar nav ─────────────────────────────────────── */
 const NAV = [
   { icon: "💬", label: "Recent Chats", to: "/workspace", active: true },
-  { icon: "🗂", label: "Document Vault", to: "/vault" },
   { icon: "✏️", label: "Simplification Rules", to: "/cards" },
-  { icon: "👥", label: "Team Assets", to: "/team" },
-  { icon: "🕐", label: "Archive", to: "/archive" },
 ];
 
 /* ─── SSE stream reader ───────────────────────────────── */
@@ -196,7 +195,7 @@ export default function WorkspacePage() {
       {/* ══ Sidebar ══ */}
       <aside className="ws-sidebar">
         <div className="ws-brand">
-          <BrandIcon />
+          <div className="brand-logo">✦</div>
           <div>
             <div className="ws-brand-name">The Lucid Curator</div>
             <div className="ws-brand-mode">AI ARCHITECT MODE</div>
@@ -213,10 +212,7 @@ export default function WorkspacePage() {
         </nav>
 
         <button className="ws-upload-btn" onClick={() => fileInputRef.current?.click()}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-          </svg>
+          <CiFileOn style={{ width: "16px", height: "16px" }} />
           Upload Document
         </button>
       </aside>
@@ -235,8 +231,6 @@ export default function WorkspacePage() {
             <button className="ws-new-doc-btn" onClick={handleNewDoc}>
               New Simplified Doc
             </button>
-            <button className="ws-icon-btn">🔔</button>
-            <button className="ws-icon-btn">⚙️</button>
             <div className="ws-avatar">LC</div>
           </div>
         </header>
@@ -247,15 +241,8 @@ export default function WorkspacePage() {
           <section className="ws-doc-panel">
             <div className="ws-doc-header">
               <div className="ws-doc-title">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                </svg>
+                <CiFileOn style={{ width: "16px", height: "16px" }} />
                 SOURCE: {file ? file.name.toUpperCase() : "NO FILE LOADED"}
-              </div>
-              <div style={{ display: "flex", gap: 6 }}>
-                <button className="ws-icon-btn sm">🔍</button>
-                <button className="ws-icon-btn sm">⊕</button>
               </div>
             </div>
 
@@ -278,12 +265,7 @@ export default function WorkspacePage() {
               {!file ? (
                 <div className="ws-dropzone-empty">
                   <div className="ws-drop-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                      <line x1="12" y1="18" x2="12" y2="12" />
-                      <polyline points="9 15 12 12 15 15" />
-                    </svg>
+                    <MdOutlineUploadFile style={{ width: "39px", height: "39px" }}/>
                   </div>
                   <p className="ws-drop-title">Drop your document here</p>
                   <p className="ws-drop-sub">or <span className="ws-drop-link">browse files</span> — PDF, DOCX, TXT, MD, CSV</p>
@@ -434,16 +416,5 @@ export default function WorkspacePage() {
         </div>
       </main>
     </div>
-  );
-}
-
-function BrandIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2d4a7a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="5" r="2" />
-      <line x1="12" y1="7" x2="8" y2="19" />
-      <line x1="12" y1="7" x2="16" y2="19" />
-      <line x1="7" y1="14" x2="17" y2="14" />
-    </svg>
   );
 }
