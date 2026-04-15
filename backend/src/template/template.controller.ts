@@ -3,8 +3,9 @@ import { TemplateService } from '@/template/template.service';
 import { GetTemplateResponseDto } from '@/template/dto/get.template.dto';
 import { CreateTemplateDto, CreateTemplateResponseDto } from '@/template/dto/create.template.dto';
 import { UpdateTemplateDto, UpdateTemplateResponseDto } from '@/template/dto/update.template.dto';
-import { DeleteTemplateDto, DeleteTemplateResponseDto } from '@/template/dto/delete.template.dto';
+import { DeleteTemplateResponseDto } from '@/template/dto/delete.template.dto';
 import { RequestWithUser } from '@/auth/types';
+import { Template } from '@/libs/orm/entities/template.entity';
 
 @Controller('template')
 export class TemplateController {
@@ -13,6 +14,12 @@ export class TemplateController {
   @Get()
   async getAll(@Req() req: RequestWithUser): Promise<GetTemplateResponseDto[]> {
     return this.templateService.getAll({}, req.user);
+  }
+
+  // Must be declared before @Get(':id') so Express doesn't treat "default" as an id
+  @Get('default')
+  async getDefaultTemplate(@Req() req: RequestWithUser): Promise<Template> {
+    return this.templateService.getDefaultTemplate(req.user);
   }
 
   @Get(':id')
@@ -47,4 +54,5 @@ export class TemplateController {
   ): Promise<DeleteTemplateResponseDto> {
     return this.templateService.delete(id, req.user);
   }
+
 }

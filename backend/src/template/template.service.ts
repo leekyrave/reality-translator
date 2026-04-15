@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { CreateTemplateDto, CreateTemplateResponseDto } from '@/template/dto/create.template.dto';
 import { UpdateTemplateDto, UpdateTemplateResponseDto } from '@/template/dto/update.template.dto';
 import { DeleteTemplateResponseDto } from '@/template/dto/delete.template.dto';
-import { EntityManager } from '@mikro-orm/core';
+import { EntityManager, NotFoundError } from '@mikro-orm/core';
 import { Template } from '@/libs/orm/entities/template.entity';
 import { GetTemplateDto, GetTemplateResponseDto } from '@/template/dto/get.template.dto';
 import { AuthPayload } from '@/auth/types';
@@ -63,8 +63,8 @@ export class TemplateService {
         id: template.id,
       };
     } catch (error: any) {
-      if (error instanceof NotFoundException)
-        throw new NotFoundException('Template not found', 'Template not found');
+      if (error instanceof NotFoundError)
+        throw new NotFoundException('Template not found');
       console.error(error);
       throw new ConflictException('Failed to update template');
     }
@@ -74,8 +74,8 @@ export class TemplateService {
       await this.em.nativeDelete(Template, { id, user: user.id });
       return {};
     } catch (error: any) {
-      if (error instanceof NotFoundException)
-        throw new NotFoundException('Template not found', 'Template not found');
+      if (error instanceof NotFoundError)
+        throw new NotFoundException('Template not found');
       throw new ConflictException('Failed to delete template');
     }
   }
@@ -106,8 +106,8 @@ export class TemplateService {
         isDefault: template.isDefault,
       };
     } catch (error: any) {
-      if (error instanceof NotFoundException)
-        throw new NotFoundException('Template not found', 'Template not found');
+      if (error instanceof NotFoundError)
+        throw new NotFoundException('Template not found');
       throw new ConflictException('Failed to get template');
     }
   }
@@ -116,7 +116,7 @@ export class TemplateService {
     const templates = DEFAULT_TEMPLATES.map((t) =>
       this.em.create(Template, { ...t, user: userId, isDefault: false }),
     );
-    await this.em.persistAndFlush(templates);
+    await this.em.persist(templates).flush();
   }
 
   async verifyTemplatesPrompt(content: string): Promise<{ verified: boolean }> {
@@ -138,5 +138,14 @@ export class TemplateService {
     });
 
     return JSON.parse(response.choices[0].message.content! as string) as { verified: boolean };
+  }
+
+  async getDefaultTemplate(user: AuthPayload): Promise<Template> {
+    try {
+      return await this.em.findOneOrFail(Template, { user: user.id, isDefault: true });
+    } catch (error) {
+      console.error(error);
+      throw new NotFoundException('Default template not found', 'Default template not found');
+    }
   }
 }
