@@ -81,7 +81,6 @@ const RegisterPage = () => {
 
           <div className="reg-right">
             <h2 className="form-title">Utwórz obszar roboczy</h2>
-            <p className="form-subtitle">Rozpocznij 14-dniowy bezpłatny okres próbny.</p>
 
             {displayError && <div className="error-box">{displayError}</div>}
 

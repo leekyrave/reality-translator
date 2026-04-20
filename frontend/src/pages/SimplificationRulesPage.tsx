@@ -10,6 +10,7 @@ import AppSidebar from "../components/AppSidebar";
 import '../styles/workspace.css';
 import '../styles/cardsPage.css';
 import {useAuth} from "../context/AuthContext.tsx";
+import {useNavigate} from "react-router-dom";
 
 interface Rule {
     id: string;
@@ -158,6 +159,7 @@ const Modal = ({rule, onClose, onSave}: ModalProps) => {
 };
 
 const SimplificationRulesPage = () => {
+    const navigate = useNavigate();
     const {logout} = useAuth();
     const [rules, setRules] = useState<Rule[]>([]);
     const [loading, setLoading] = useState(true);
@@ -289,7 +291,8 @@ const SimplificationRulesPage = () => {
                                 <div className="info-title">Zarządzanie personami AI</div>
                                 <div className="info-text">
                                     Zdefiniuj, jak AI-Kumpel przetwarza złożone dane. Ustaw jedną regułę jako
-                                    <strong> domyślną</strong> — zostanie automatycznie wstrzyknięta jako prompt systemowy AI podczas analizy dokumentów.
+                                    <strong> domyślną</strong> — zostanie automatycznie wstrzyknięta jako prompt
+                                    systemowy AI podczas analizy dokumentów.
                                 </div>
                             </div>
                         </div>

@@ -58,3 +58,21 @@ style without touching application code.
 - JWT-based session management
 - Jailbreak / prompt injection protection on all AI endpoints
 - Throttler / rate limiting
+
+
+
+
+# Frontend structure
+
+## Tech stack
+
+| Warstwa | Technologia |
+|---|---|
+| Framework UI | React 19 + TypeScript 6 |
+| Routing | React Router v7 |
+| Style | Tailwind CSS v4 + własne pliki CSS |
+| HTTP client | Fetch API (własny wrapper `apiClient`) |
+| Streaming | Server-Sent Events (SSE) |
+| Bundler | Vite 8 |
+| Linter | ESLint 9 + typescript-eslint |
+| Konteneryzacja | Docker + Nginx |
